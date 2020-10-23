@@ -1,0 +1,6 @@
+FileVersion = 1
+
+[Project]
+Name = "spine-beef"
+TargetType = "BeefLib"
+DefaultNamespace = "Spine"
