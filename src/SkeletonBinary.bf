@@ -159,9 +159,6 @@ namespace Spine {
 
 			// Bones.
 			//skeletonData.bones.Resize(n = input.ReadInt(true));
-#if DEBUG
-			Debug.Assert(skeletonData.bones.Count == 0, "SkeletonBinary: bonedata list is not empty as expected");
-#endif
 			skeletonData.bones.GrowUnitialized(n = input.ReadInt(true));//TODO: assumes the list's count is zero
 			for (int i = 0; i < n; i++) {
 				String name = input.ReadString(new .());
@@ -769,7 +766,8 @@ namespace Spine {
 				for (int ii = 0, int nn = input.ReadInt(true); ii < nn; ii++) {
 					int slotIndex = input.ReadInt(true);
 					for (int iii = 0, int nnn = input.ReadInt(true); iii < nnn; iii++) {
-						VertexAttachment attachment = (VertexAttachment)skin.GetAttachment(slotIndex, input.ReadStringRef());
+
+						VertexAttachment attachment = (VertexAttachment)skin.GetAttachment(slotIndex, input.ReadStringRef(scope String()));
 						bool weighted = attachment.bones != null;
 						float[] vertices = attachment.vertices;
 						int deformCount = weighted ? vertices.Count / 3 * 2 : vertices.Count;
@@ -976,6 +974,11 @@ namespace Spine {
 			public String ReadStringRef () {
 				int index = ReadInt(true);
 				return index == 0 ? null : new String(Strings[index - 1]);
+			}
+
+			public String ReadStringRef (String str) {
+				int index = ReadInt(true);
+				return index == 0 ? str : str..Append(Strings[index - 1]);
 			}
 
 			public void ReadFully (uint8[] buffer, int _offset, int _Count)

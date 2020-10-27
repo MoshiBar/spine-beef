@@ -40,7 +40,7 @@ namespace Spine {
 	/// </summary>
 	public class TransformConstraint : IUpdatable {
 		public TransformConstraintData data;
-		public List<Bone> bones;
+		public List<Bone> bones ~ delete _;
 		public Bone target;
 		public float rotateMix, translateMix, scaleMix, shearMix;
 

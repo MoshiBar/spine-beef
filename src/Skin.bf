@@ -40,7 +40,7 @@ namespace Spine {
 	public class Skin {
 		public String name ~ delete _;
 		private OrderedDictionary<SkinEntry, Attachment> attachments = new OrderedDictionary<SkinEntry, Attachment>(SkinEntryComparer.Instance) ~ delete _;
-		public readonly List<BoneData> bones = new List<BoneData>() ~ DeleteContainerAndItems!(_);
+		public readonly List<BoneData> bones = new List<BoneData>() ~ delete _;
 		public readonly List<ConstraintData> constraints = new List<ConstraintData>() ~ DeleteContainerAndItems!(_);
 
 		public String Name { get { return name; } }
