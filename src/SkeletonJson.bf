@@ -440,12 +440,12 @@ namespace Spine {
 
 					float[] uvs = GetFloatArray(map, "uvs", 1);
 					ReadVertices(map, mesh, uvs.Count);
-					mesh.triangles = GetIntArray(map, "triangles");
+					mesh.triangles = GetUIntArray(map, "triangles");
 					mesh.regionUVs = uvs;
 					mesh.UpdateUVs();
 
 					if (map.ContainsKey("hull")) mesh.HullCount = GetInt(map, "hull", 0) * 2;
-					if (map.ContainsKey("edges")) mesh.Edges = GetIntArray(map, "edges");
+					if (map.ContainsKey("edges")) mesh.Edges = GetUIntArray(map, "edges");
 					return mesh;
 				}
 			case AttachmentType.Path: {
@@ -496,7 +496,7 @@ namespace Spine {
 		}
 
 		private void ReadVertices (Dictionary<String, Object> map, VertexAttachment attachment, int verticesCount) {
-			attachment.WorldVerticesCount = verticesCount;
+			attachment.WorldVerticesCount = (uint32)verticesCount;
 			float[] vertices = GetFloatArray(map, "vertices", 1);
 			float scale = Scale;
 			if (verticesCount == vertices.Count) {
@@ -890,11 +890,19 @@ namespace Spine {
 			return values;
 		}
 
-		static int[] GetIntArray(Dictionary<String, Object> map, String name) {
+		static int32[] GetIntArray(Dictionary<String, Object> map, String name) {
 			var list = (List<Object>)map[name];
-			var values = new int[list.Count];
+			var values = new int32[list.Count];
 			for (int i = 0, int n = list.Count; i < n; i++)
-				values[i] = (int)(float)list[i];
+				values[i] = (int32)(float)list[i];
+			return values;
+		}
+
+		static uint32[] GetUIntArray(Dictionary<String, Object> map, String name) {
+			var list = (List<Object>)map[name];
+			var values = new uint32[list.Count];
+			for (int i = 0, int n = list.Count; i < n; i++)
+				values[i] = (uint32)(float)list[i];
 			return values;
 		}
 

@@ -402,7 +402,7 @@ namespace Spine {
 
 					BoundingBoxAttachment boxAttachment = attachmentLoader.NewBoundingBoxAttachment(skin, name);
 					if (boxAttachment == null) return null;
-					boxAttachment.worldVerticesCount = vertexCount << 1;
+					boxAttachment.worldVerticesCount = (uint32)vertexCount << 1;
 					boxAttachment.vertices = vertices.vertices;
 					boxAttachment.bones = vertices.bones;
 					// skipped porting: if (nonessential) Color.rgba8888ToColor(box.getColor(), color);
@@ -413,12 +413,12 @@ namespace Spine {
 			case AttachmentType.Mesh: {
 					String path = input.ReadStringRef();
 					int color = input.ReadInt();
-					int vertexCount = input.ReadInt(true);
+					uint32 vertexCount = (uint32)input.ReadInt(true);
 					float[] uvs = ReadFloatArray(input, vertexCount << 1, 1);
-					int[] triangles = ReadShortArray(input);
+					uint32[] triangles = ReadShortArray(input);
 					Vertices vertices = ReadVertices(input, vertexCount);
 					int hullCount = input.ReadInt(true);
-					int[] edges = null;
+					uint32[] edges = null;
 					float width = 0, height = 0;
 					if (nonessential) {
 						edges = ReadShortArray(input);
@@ -479,7 +479,7 @@ namespace Spine {
 			case AttachmentType.Path: {
 					bool closed = input.ReadBoolean();
 					bool constantSpeed = input.ReadBoolean();
-					int vertexCount = input.ReadInt(true);
+					uint32 vertexCount = (uint32)input.ReadInt(true);
 					Vertices vertices = ReadVertices(input, vertexCount);
 					float[] Lengths = new float[vertexCount / 3];
 					for (int i = 0, int n = Lengths.Count; i < n; i++)
@@ -514,7 +514,7 @@ namespace Spine {
 				}
 			case AttachmentType.Clipping: {
 					int endSlotIndex = input.ReadInt(true);
-					int vertexCount = input.ReadInt(true);
+					uint32 vertexCount = (uint32)input.ReadInt(true);
 					Vertices vertices = ReadVertices(input, vertexCount);
 					if (nonessential) input.ReadInt();
 
@@ -575,11 +575,11 @@ namespace Spine {
 			return array;
 		}
 
-		private int[] ReadShortArray (SkeletonInput input) {
+		private uint32[] ReadShortArray (SkeletonInput input) {
 			int n = input.ReadInt(true);
-			int[] array = new int[n];
+			uint32[] array = new .[n];
 			for (int i = 0; i < n; i++)
-				array[i] = ((int)input.Read<uint8>().Get(0) << 8) | input.Read<uint8>().Get(0);
+				array[i] = ((uint32)input.Read<uint8>().Get(0) << 8) | input.Read<uint8>().Get(0);
 			return array;
 		}
 
@@ -885,8 +885,8 @@ namespace Spine {
 
 		public class Vertices
 		{
-			public int[] bones ~ delete _;
-			public float[] vertices ~ delete _;
+			public int[] bones;
+			public float[] vertices;
 		}
 
 		public class SkeletonInput {

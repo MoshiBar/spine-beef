@@ -184,6 +184,8 @@ namespace Spine {
 			{
 				return hashCode;
 			}
+
+			public static bool operator ==(SkinEntry a, SkinEntry b) => a.slotIndex == b.slotIndex && a.name == b.name;
 		}
 
 		// Avoids boxing in the dictionary and is necessary to omit entry.attachment in the comparison.

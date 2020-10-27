@@ -149,7 +149,9 @@ namespace Spine {
 		/// <param name="worldVertices">The output world vertices. Must have a Count greater than or equal to offset + 8.</param>
 		/// <param name="offset">The worldVertices index to begin writing values.</param>
 		/// <param name="stride">The number of worldVertices entries between the value pairs written.</param>
-		public void ComputeWorldVertices (Bone bone, float[] worldVertices, int _offset, int stride = 2) {
+		public void ComputeWorldVertices (Bone bone, float[] worldVertices, int _offset, int stride = 2) => ComputeWorldVertices(bone, worldVertices.CArray(), _offset, stride);
+
+		public void ComputeWorldVertices (Bone bone, float* worldVertices, int _offset, int stride = 2){
 			int offset = _offset;
 
 			float[] vertexOffset = this.offset;

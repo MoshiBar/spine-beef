@@ -37,15 +37,15 @@ namespace Spine
 	//[Il2CppSetOption(Option.ArrayBoundsChecks, false)]
 	//[Il2CppSetOption(Option.NullChecks, false)]
 	public class Triangulator {
-		private readonly List<List<float>> convexPolygons = new List<List<float>>();
-		private readonly List<List<int>> convexPolygonsIndices = new List<List<int>>();
+		private readonly List<List<float>> convexPolygons = new List<List<float>>() ~ delete _;
+		private readonly List<List<int>> convexPolygonsIndices = new List<List<int>>() ~ delete _;
 
-		private readonly List<int> indices = new List<int>();
-		private readonly List<bool> isConcave = new List<bool>();
-		private readonly List<int> triangles = new List<int>();
+		private readonly List<int> indices = new List<int>() ~ delete _;
+		private readonly List<bool> isConcave = new List<bool>() ~ delete _;
+		private readonly List<int> triangles = new List<int>() ~ delete _;
 
-		private readonly Pool<List<float>> polygonPool = new Pool<List<float>>();
-		private readonly Pool<List<int>> polygonIndicesPool = new Pool<List<int>>();
+		private readonly Pool<List<float>> polygonPool = new Pool<List<float>>() ~ delete _;
+		private readonly Pool<List<int>> polygonIndicesPool = new Pool<List<int>>() ~ delete _;
 
 		public List<int> Triangulate (List<float> vertices) {
 			int vertexCount = vertices.Count >> 1;

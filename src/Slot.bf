@@ -43,7 +43,7 @@ namespace Spine {
 		public float r, g, b, a;
 		public float r2, g2, b2;
 		public bool hasSecondColor;
-		public Attachment attachment ~ delete _;
+		public Attachment attachment;
 		public float attachmentTime;
 		public List<float> deform = new List<float>() ~ delete _;
 

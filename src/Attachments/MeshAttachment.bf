@@ -38,7 +38,7 @@ namespace Spine {
 		private MeshAttachment parentMesh;
 		public float[] uvs ~ delete _;
 		public float[] regionUVs ~ delete _;
-		public int[] triangles ~ delete _;
+		public uint32[] triangles ~ delete _;
 		public float r = 1, g = 1, b = 1, a = 1;
 		public int hullCount;
 
@@ -46,7 +46,7 @@ namespace Spine {
 		public float[] RegionUVs { get { return regionUVs; } set { regionUVs = value; } }
 		/// <summary>The UV pair for each vertex, normalized within the entire texture. <seealso cref="MeshAttachment.UpdateUVs"/></summary>
 		public float[] UVs { get { return uvs; } set { uvs = value; } }
-		public int[] Triangles { get { return triangles; } set { triangles = value; } }
+		public uint32[] Triangles { get { return triangles; } set { triangles = value; } }
 
 		public float R { get { return r; } set { r = value; } }
 		public float G { get { return g; } set { g = value; } }
@@ -87,7 +87,7 @@ namespace Spine {
 		}
 
 		// Nonessential.
-		public int[] Edges ~ delete _;
+		public uint32[] Edges ~ delete _;
 		public float Width { get; set; }
 		public float Height { get; set; }
 
@@ -181,13 +181,13 @@ namespace Spine {
 			Array.Copy(regionUVs, 0, copy.regionUVs, 0, regionUVs.Count);
 			copy.uvs = new float[uvs.Count];
 			Array.Copy(uvs, 0, copy.uvs, 0, uvs.Count);
-			copy.triangles = new int[triangles.Count];
+			copy.triangles = new uint32[triangles.Count];
 			Array.Copy(triangles, 0, copy.triangles, 0, triangles.Count);
 			copy.HullCount = HullCount;
 
 			// Nonessential.
 			if (Edges != null) {
-				copy.Edges = new int[Edges.Count];
+				copy.Edges = new uint32[Edges.Count];
 				Array.Copy(Edges, 0, copy.Edges, 0, Edges.Count);
 			}
 			copy.Width = Width;

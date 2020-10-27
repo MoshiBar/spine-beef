@@ -40,16 +40,16 @@ namespace Spine {
 		static readonly Monitor nextIdLock = new Monitor() ~ delete _;
 
 		public readonly int id;
-		public int[] bones;
-		public float[] vertices;
-		public int worldVerticesCount;
+		public int[] bones ~ delete _;
+		public float[] vertices ~ delete _;
+		public uint32 worldVerticesCount;
 		public VertexAttachment deformAttachment;
 
 		/// <summary>Gets a unique ID for this attachment.</summary>
 		public int Id { get { return id; } }
 		public int[] Bones { get { return bones; } set { bones = value; } }
 		public float[] Vertices { get { return vertices; } set { vertices = value; } }
-		public int WorldVerticesCount { get { return worldVerticesCount; } set { worldVerticesCount = value; } }
+		public uint32 WorldVerticesCount { get { return worldVerticesCount; } set { worldVerticesCount = value; } }
 		///<summary>Deform keys for the deform attachment are also applied to this attachment.
 		/// May be null if no deform keys should be applied.</summary>
 		public VertexAttachment DeformAttachment { get { return deformAttachment; } set { deformAttachment = value; } }

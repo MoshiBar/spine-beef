@@ -32,19 +32,19 @@ using System.Collections;
 
 namespace Spine {
 	public class SkeletonClipping {
-		public readonly Triangulator triangulator = new Triangulator();
-		public readonly List<float> clippingPolygon = new List<float>();
-		public readonly List<float> clipOutput = new List<float>(128);
-		public readonly List<float> clippedVertices = new List<float>(128);
-		public readonly List<int> clippedTriangles = new List<int>(128);
-		public readonly List<float> clippedUVs = new List<float>(128);
-		public readonly List<float> scratch = new List<float>();
+		public readonly Triangulator triangulator = new .() ~ delete _;
+		public readonly List<float> clippingPolygon = new .() ~ delete _;
+		public readonly List<float> clipOutput = new .(128) ~ delete _;
+		public readonly List<float> clippedVertices = new .(128) ~ delete _;
+		public readonly List<uint32> clippedTriangles = new .(128) ~ delete _;
+		public readonly List<float> clippedUVs = new .(128) ~ delete _;
+		public readonly List<float> scratch = new .() ~ delete _;
 
 		public ClippingAttachment clipAttachment;
 		public List<List<float>> clippingPolygons;
 
 		public List<float> ClippedVertices { get { return clippedVertices; } }
-		public List<int> ClippedTriangles { get { return clippedTriangles; } }
+		public List<uint32> ClippedTriangles { get { return clippedTriangles; } }
 		public List<float> ClippedUVs { get { return clippedUVs; } }
 
 		public bool IsClipping { get { return clipAttachment != null; } }
@@ -81,19 +81,19 @@ namespace Spine {
 			clippingPolygon.Clear();
 		}
 
-		public void ClipTriangles (float[] vertices, int verticesCount, int[] triangles, int trianglesCount, float[] uvs) {
+		public void ClipTriangles (float* vertices, int verticesCount, uint32* triangles, int trianglesCount, float* uvs) {
 			List<float> clipOutput = this.clipOutput, clippedVertices = this.clippedVertices;
 			var clippedTriangles = this.clippedTriangles;
 			var polygons = clippingPolygons;
 			int polygonsCount = clippingPolygons.Count;
 
-			int index = 0;
+			uint32 index = 0;
 			clippedVertices.Clear();
 			clippedUVs.Clear();
 			clippedTriangles.Clear();
 			//outer:
 			for (int i = 0; i < trianglesCount; i += 3) {
-				int vertexOffset = triangles[i] << 1;
+				uint32 vertexOffset = triangles[i] << 1;
 				float x1 = vertices[vertexOffset], y1 = vertices[vertexOffset + 1];
 				float u1 = uvs[vertexOffset], v1 = uvs[vertexOffset + 1];
 
@@ -108,12 +108,12 @@ namespace Spine {
 				for (int p = 0; p < polygonsCount; p++) {
 					int s = clippedVertices.Count;
 					if (Clip(x1, y1, x2, y2, x3, y3, polygons[p], clipOutput)) {
-						int clipOutputLength = clipOutput.Count;
+						uint32 clipOutputLength = (uint32)clipOutput.Count;
 						if (clipOutputLength == 0) continue;
 						float d0 = y2 - y3, d1 = x3 - x2, d2 = x1 - x3, d4 = y3 - y1;
 						float d = 1 / (d0 * d2 + d1 * (y1 - y3));
 
-						int clipOutputCount = clipOutputLength >> 1;
+						uint32 clipOutputCount = clipOutputLength >> 1;
 						float* clipOutputItems = clipOutput.Ptr;
 						float* clippedVerticesItems = clippedVertices..GrowUnitialized(s + clipOutputCount * 2 - clippedVertices.Count).Ptr;
 						float* clippedUVsItems = clippedUVs..GrowUnitialized(s + clipOutputCount * 2 - clippedUVs.Count).Ptr;
@@ -133,7 +133,7 @@ namespace Spine {
 						s = clippedTriangles.Count;
 						clippedTriangles.GrowUnitialized(s + 3 * (clipOutputCount - 2) - clippedTriangles.Count);
 						clipOutputCount--;
-						for (int ii = 1; ii < clipOutputCount; ii++) {
+						for (uint32 ii = 1; ii < clipOutputCount; ii++) {
 							clippedTriangles[s] = index;
 							clippedTriangles[s + 1] = index + ii;
 							clippedTriangles[s + 2] = index + ii + 1;
@@ -159,7 +159,7 @@ namespace Spine {
 						clippedUVsItems[s + 5] = v3;
 
 						s = clippedTriangles.Count;
-						int* clippedTrianglesItems = clippedTriangles..GrowUnitialized(s + 3 - clippedTriangles.Count).Ptr;
+						uint32* clippedTrianglesItems = clippedTriangles..GrowUnitialized(s + 3 - clippedTriangles.Count).Ptr;
 						clippedTrianglesItems[s] = index;
 						clippedTrianglesItems[s + 1] = index + 1;
 						clippedTrianglesItems[s + 2] = index + 2;
