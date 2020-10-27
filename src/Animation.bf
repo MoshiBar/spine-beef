@@ -84,7 +84,7 @@ namespace Spine {
 
 			List<Timeline> timelines = this.timelines;
 			for (int i = 0, int n = timelines.Count; i < n; i++)
-				timelines.Ptr[i].Apply(skeleton, lastTime, time, /*events*/ null, alpha, blend, direction);
+				timelines[i].Apply(skeleton, lastTime, time, /*events*/ null, alpha, blend, direction);
 		}
 
 		public String ToString () {
@@ -379,12 +379,10 @@ namespace Spine {
 					case MixBlend.Setup:
 						bone.rotation = bone.data.rotation + r * alpha;
 						break;
-					case MixBlend.First:
-					case MixBlend.Replace:
+					case MixBlend.First, .Replace:
 						r += bone.data.rotation - bone.rotation;
 						r -= (16384 - (int)(16384.499999999996 - r / 360)) * 360;
 						fallthrough; //goto case MixBlend.Add; // Fall through.
-
 					case MixBlend.Add:
 						bone.rotation += r * alpha;
 						break;
@@ -405,8 +403,7 @@ namespace Spine {
 					case MixBlend.Setup:
 						bone.rotation = bone.data.rotation + (r - (16384 - (int)(16384.499999999996 - r / 360)) * 360) * alpha;
 						break;
-					case MixBlend.First:
-					case MixBlend.Replace:
+					case MixBlend.First, .Replace:
 						r += bone.data.rotation - bone.rotation;
 						fallthrough; //goto case MixBlend.Add; // Fall through.
 					case MixBlend.Add:
@@ -499,8 +496,7 @@ namespace Spine {
 					bone.x = bone.data.x + x * alpha;
 					bone.y = bone.data.y + y * alpha;
 					break;
-				case MixBlend.First:
-				case MixBlend.Replace:
+				case MixBlend.First, MixBlend.Replace:
 					bone.x += (bone.data.x + x - bone.x) * alpha;
 					bone.y += (bone.data.y + y - bone.y) * alpha;
 					break;
@@ -577,8 +573,7 @@ namespace Spine {
 							bone.scaleX = bx + (Math.Abs(x) * Math.Sign(bx) - bx) * alpha;
 							bone.scaleY = by + (Math.Abs(y) * Math.Sign(by) - by) * alpha;
 							break;
-						case MixBlend.First:
-						case MixBlend.Replace:
+						case MixBlend.First, MixBlend.Replace:
 							bx = bone.scaleX;
 							by = bone.scaleY;
 							bone.scaleX = bx + (Math.Abs(x) * Math.Sign(bx) - bx) * alpha;
@@ -599,8 +594,7 @@ namespace Spine {
 							bone.scaleX = bx + (x - bx) * alpha;
 							bone.scaleY = by + (y - by) * alpha;
 							break;
-						case MixBlend.First:
-						case MixBlend.Replace:
+						case MixBlend.First, MixBlend.Replace:
 							bx = Math.Abs(bone.scaleX) * Math.Sign(x);
 							by = Math.Abs(bone.scaleY) * Math.Sign(y);
 							bone.scaleX = bx + (x - bx) * alpha;
@@ -669,8 +663,7 @@ namespace Spine {
 					bone.shearX = bone.data.shearX + x * alpha;
 					bone.shearY = bone.data.shearY + y * alpha;
 					break;
-				case MixBlend.First:
-				case MixBlend.Replace:
+				case MixBlend.First, MixBlend.Replace:
 					bone.shearX += (bone.data.shearX + x - bone.shearX) * alpha;
 					bone.shearY += (bone.data.shearY + y - bone.shearY) * alpha;
 					break;
@@ -1230,8 +1223,7 @@ namespace Spine {
 						}
 						break;
 					}
-					case MixBlend.First:
-					case MixBlend.Replace: {
+					case MixBlend.First, MixBlend.Replace: {
 						// Vertex positions or deform offsets, with alpha.
 						for (int i = 0; i < vertexCount; i++) {
 							float prev = prevVertices[i];

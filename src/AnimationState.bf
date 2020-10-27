@@ -297,7 +297,7 @@ namespace Spine
 					MixDirection direction = MixDirection.Out;
 					MixBlend timelineBlend;
 					float alpha;
-					switch (timelineMode[i] & AnimationState.NotLast - 1) {
+					switch (timelineMode[i] & (AnimationState.NotLast - 1)) {
 						case AnimationState.Subsequent:
 							timelineBlend = blend;
 							if (!attachments && timeline is AttachmentTimeline) {

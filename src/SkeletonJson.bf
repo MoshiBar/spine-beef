@@ -415,8 +415,7 @@ namespace Spine {
 				if (boxAttachment == null) return null;
 				ReadVertices(map, boxAttachment, GetInt(map, "vertexCount", 0) << 1);
 				return boxAttachment;
-			case AttachmentType.Mesh:
-			case AttachmentType.Linkedmesh: {
+			case AttachmentType.Mesh, AttachmentType.Linkedmesh: {
 					MeshAttachment mesh = attachmentLoader.NewMeshAttachment(skin, name, path);
 					if (mesh == null) return null;
 					mesh.Path = path;

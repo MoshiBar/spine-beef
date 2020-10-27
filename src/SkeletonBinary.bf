@@ -729,8 +729,7 @@ namespace Spine {
 					int timelineType = input.ReadSByte();
 					int frameCount = input.ReadInt(true);
 					switch(timelineType) {
-						case PATH_POSITION:
-						case PATH_SPACING: {
+						case PATH_POSITION, PATH_SPACING: {
 								PathConstraintPositionTimeline timeline;
 								float timelineScale = 1;
 								if (timelineType == PATH_SPACING) {
