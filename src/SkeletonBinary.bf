@@ -27,19 +27,10 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#if (UNITY_5 || UNITY_5_3_OR_NEWER || UNITY_WSA || UNITY_WP8 || UNITY_WP8_1)
-#define IS_UNITY
-#endif
-
 using System;
 using System.IO;
 using System.Collections;
 using System.Diagnostics;
-
-#if WINDOWS_STOREAPP
-using System.Threading.Tasks;
-using Windows.Storage;
-#endif
 
 namespace Spine {
 	public class SkeletonBinary {
@@ -75,23 +66,9 @@ namespace Spine {
 			Scale = 1;
 		}
 
-		#if !ISUNITY && WINDOWS_STOREAPP
-		private async Task<SkeletonData> ReadFile(String path) {
-			var folder = Windows.ApplicationModel.Package.Current.InstalledLocation;
-			using (var input = new BufferedStream(await folder.GetFileAsync(path).AsTask().ConfigureAwait(false))) {
-				SkeletonData skeletonData = ReadSkeletonData(input);
-				skeletonData.Name = Path.GetFileNameWithoutExtension(path);
-				return skeletonData;
-			}
-		}
-
-		public SkeletonData ReadSkeletonData (String path) {
-			return this.ReadFile(path).Result;
-		}
-		#else
 		public SkeletonData ReadSkeletonData (String path)
 		{
-			var input = scope FileStream(/*path, FileMode.Open, FileAccess.Read, FileShare.Read*/);
+			var input = scope FileStream();
 			input.Open(path, .Read, .Read, 4096, .None, null);
 
 			SkeletonData skeletonData = ReadSkeletonData(input);
@@ -100,7 +77,6 @@ namespace Spine {
 			skeletonData.name = name;
 			return skeletonData;
 		}
-		#endif // WINDOWS_STOREAPP
 
 		public static readonly TransformMode[] TransformModeValues = new TransformMode[] (
 			TransformMode.Normal,
@@ -149,7 +125,6 @@ namespace Spine {
 			}
 
 			int n;
-			//Object[] o;
 			// Strings.
 			input.Strings = new List<String>(n = input.ReadInt(true));
 			//input.Strings.Resize(n);
@@ -253,9 +228,9 @@ namespace Spine {
 				for (int ii = 0; ii < nn; ii++)
 					data.bones[ii] = skeletonData.bones[input.ReadInt(true)];
 				data.target = skeletonData.slots[input.ReadInt(true)];
-				data.positionMode = (PositionMode)/*Enum.GetValues(typeof(PositionMode)).GetValue(*/input.ReadInt(true)/*)*/;
-				data.spacingMode = (SpacingMode)/*Enum.GetValues(typeof(SpacingMode)).GetValue(*/input.ReadInt(true)/*)*/;
-				data.rotateMode = (RotateMode)/*Enum.GetValues(typeof(RotateMode)).GetValue(*/input.ReadInt(true)/*)*/;
+				data.positionMode = (PositionMode)input.ReadInt(true);
+				data.spacingMode = (SpacingMode)input.ReadInt(true);
+				data.rotateMode = (RotateMode)input.ReadInt(true);
 				data.offsetRotation = input.ReadFloat();
 				data.position = input.ReadFloat();
 				if (data.positionMode == PositionMode.Fixed) data.position *= scale;
@@ -300,7 +275,7 @@ namespace Spine {
 				data.Float = input.ReadFloat();
 				data.string = input.ReadString(new .());
 				data.AudioPath = input.ReadString(new .());
-				if (data.AudioPath.Length > 0/* != null*/) {
+				if (data.AudioPath.Length > 0) {
 					data.Volume = input.ReadFloat();
 					data.Balance = input.ReadFloat();
 				}
@@ -919,8 +894,7 @@ namespace Spine {
 				chars[2] = (uint8)input.Read<uint8>().Get(0);
 				chars[1] = (uint8)input.Read<uint8>().Get(0);
 				chars[0] = (uint8)input.Read<uint8>().Get(0);
-				return ((float*)&chars[0])[0]; //BitConverter.ToSingle(chars, 0);
-				//return input.Read<float>().Get(0);
+				return *((float*)&chars[0]);
 			}
 
 			public int ReadInt () {
@@ -956,15 +930,7 @@ namespace Spine {
 				}
 				byteCount--;
 				uint8[] buffer = scope uint8[byteCount]; //this.chars;
-				/*if (buffer.Count < byteCount)
-				{
-					buffer = new uint8[byteCount];
-					defer::{
-						delete buffer;
-					}
-				}*/
 				
-
 				ReadFully(buffer, 0, byteCount);
 
 				System.Text.Encoding.UTF8.DecodeToUTF8(Span<uint8>(buffer, 0, byteCount), strBuffer);
@@ -1015,7 +981,6 @@ namespace Spine {
 						byteCount--;
 						var buffer = scope uint8[byteCount];
 						ReadFully(buffer, 0, byteCount);
-						//return System.Text.Encoding.UTF8.GetString(buffer, 0, byteCount);
 
 						System.Text.Encoding.UTF8.DecodeToUTF8(Span<uint8>(buffer, 0, byteCount), strBuffer);
 					}

@@ -198,7 +198,6 @@ namespace Spine
 		/// Poses the skeleton using the track entry animations. There are no side effects other than invoking listeners, so the
 		/// animation state can be applied to multiple skeletons to pose them identically.</summary>
 		/// <returns>True if any animations were applied.</returns>
-		[DisableChecks, Export, LinkName("AnimationState_Apply")]
 		public bool Apply (Skeleton skeleton) {
 			//if (skeleton == null) throw new ArgumentNullException("skeleton", "skeleton cannot be null.");
 			if (animationsChanged) AnimationsChanged();
@@ -237,7 +236,7 @@ namespace Spine
 
 					for (int ii = 0; ii < timelineCount; ii++) {
 						Timeline timeline = timelinesItems[ii];
-						MixBlend timelineBlend = (timelineMode[ii] & AnimationState.NotLast - 1) == AnimationState.Subsequent ? blend : MixBlend.Setup;
+						MixBlend timelineBlend = (timelineMode[ii] & (AnimationState.NotLast - 1)) == AnimationState.Subsequent ? blend : MixBlend.Setup;
 						if(timeline is RotateTimeline)
 							ApplyRotateTimeline((RotateTimeline)timeline, skeleton, animationTime, mix, timelineBlend, timelinesRotation,
 												ii << 1, firstFrame);

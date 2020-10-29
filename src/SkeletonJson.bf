@@ -27,18 +27,9 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#if (UNITY_5 || UNITY_5_3_OR_NEWER || UNITY_WSA || UNITY_WP8 || UNITY_WP8_1)
-#define IS_UNITY
-#endif
-
 using System;
 using System.IO;
 using System.Collections;
-
-#if WINDOWS_STOREAPP
-using System.Threading.Tasks;
-using Windows.Storage;
-#endif
 
 namespace Spine {
 	public class SkeletonJson {
@@ -57,21 +48,6 @@ namespace Spine {
 			Scale = 1;
 		}
 
-		#if !IS_UNITY && WINDOWS_STOREAPP
-		private async Task<SkeletonData> ReadFile(String path) {
-			var folder = Windows.ApplicationModel.Package.Current.InstalledLocation;
-			var file = await folder.GetFileAsync(path).AsTask().ConfigureAwait(false);
-			using (var reader = new StreamReader(await file.OpenStreamForReadAsync().ConfigureAwait(false))) {
-				SkeletonData skeletonData = ReadSkeletonData(reader);
-				skeletonData.Name = Path.GetFileNameWithoutExtension(path);
-				return skeletonData;
-			}
-		}
-
-		public SkeletonData ReadSkeletonData (String path) {
-			return this.ReadFile(path).Result;
-		}
-		#else
 		public SkeletonData ReadSkeletonData (String path)
 		{
 			//using (var reader = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)))
@@ -84,7 +60,6 @@ namespace Spine {
 			skeletonData.name = name;
 			return skeletonData;
 		}
-		#endif
 
 		public SkeletonData ReadSkeletonData (StreamReader reader) {
 			//if (reader == null) throw new ArgumentNullException("reader", "reader cannot be null.");
@@ -135,7 +110,6 @@ namespace Spine {
 
 					String tm = GetString(boneMap, "transform", toStr);
 					data.transformMode = Enum.Parse<TransformMode>(tm, true);
-					//data.transformMode = (TransformMode)Enum.Parse(typeof(TransformMode), tm, true);
 					data.skinRequired = GetBoolean(boneMap, "skin", false);
 
 					skeletonData.bones.Add(data);
@@ -170,7 +144,6 @@ namespace Spine {
 					data.attachmentName = GetString(slotMap, "attachment", null);
 					if (slotMap.ContainsKey("blend"))
 						data.blendMode = Enum.Parse<BlendMode>((String)slotMap["blend"], true);
-						//data.blendMode = (BlendMode)Enum.Parse(typeof(BlendMode), (String)slotMap["blend"], true);
 					else
 						data.blendMode = BlendMode.Normal;
 					skeletonData.slots.Add(data);
@@ -491,7 +464,6 @@ namespace Spine {
 			default:
 				return null;
 			}
-			return null;
 		}
 
 		private void ReadVertices (Dictionary<String, Object> map, VertexAttachment attachment, int verticesCount) {
@@ -933,7 +905,6 @@ namespace Spine {
 			//if (hexString.Count != expectedCount)
 				//throw new ArgumentException("Color hexidecimal Count must be " + expectedCount + ", recieved: " + hexString, "hexString");
 			return int32.Parse(StringView(hexString, colorIndex * 2, 2), .HexNumber).Get(0) / 255f;
-			//return Convert.ToInt32(hexString.SubString(colorIndex * 2, 2), 16) / (float)255;
 		}
 	}
 }

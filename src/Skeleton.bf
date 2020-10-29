@@ -149,30 +149,29 @@ namespace Spine {
 			var transformConstraints = this.transformConstraints;
 			var pathConstraints = this.pathConstraints;
 			int constraintCount = ikCount + transformCount + pathCount;
-			//outer:
-			for (int i = 0; i < constraintCount; i++) {
-				a: for (int ii = 0; ii < ikCount; ii++) {
+
+			outer: for (int i = 0; i < constraintCount; i++) {
+				for (int ii = 0; ii < ikCount; ii++) {
 					IkConstraint constraint = ikConstraints[ii];
 					if (constraint.data.order == i) {
 						SortIkConstraint(constraint);
-						break a; //goto continue_outer; //continue outer;
+						continue outer;
 					}
 				}
-				a: for (int ii = 0; ii < transformCount; ii++) {
+				for (int ii = 0; ii < transformCount; ii++) {
 					TransformConstraint constraint = transformConstraints[ii];
 					if (constraint.data.order == i) {
 						SortTransformConstraint(constraint);
-						break; //goto continue_outer; //continue outer;
+						continue outer;
 					}
 				}
-				a: for (int ii = 0; ii < pathCount; ii++) {
+				for (int ii = 0; ii < pathCount; ii++) {
 					PathConstraint constraint = pathConstraints[ii];
 					if (constraint.data.order == i) {
 						SortPathConstraint(constraint);
-						break a; //goto continue_outer; //continue outer;
+						continue outer;
 					}
 				}
-				//continue_outer: {}
 			}
 
 			for (int i = 0; i < boneCount; i++)
@@ -628,7 +627,6 @@ namespace Spine {
 			vertexBuffer = temp;
 		}
 
-		[Export, LinkName("Skeleton_GetSlot")]
 		public Slot GetSlot(int index) => slots[index];
 	}
 }

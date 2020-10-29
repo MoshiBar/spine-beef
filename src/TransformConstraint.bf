@@ -123,8 +123,8 @@ namespace Spine {
 				}
 
 				if (translateMix != 0) {
-					float tx, ty; //Vector2 temp = this.temp;
-					target.LocalToWorld(data.offsetX, data.offsetY, out tx, out ty); //target.localToWorld(temp.set(data.offsetX, data.offsetY));
+					float tx, ty;
+					target.LocalToWorld(data.offsetX, data.offsetY, out tx, out ty);
 					bone.worldX += (tx - bone.worldX) * translateMix;
 					bone.worldY += (ty - bone.worldY) * translateMix;
 					modified = true;
@@ -187,8 +187,8 @@ namespace Spine {
 				}
 
 				if (translateMix != 0) {
-					float tx, ty; //Vector2 temp = this.temp;
-					target.LocalToWorld(data.offsetX, data.offsetY, out tx, out ty); //target.localToWorld(temp.set(data.offsetX, data.offsetY));
+					float tx, ty;
+					target.LocalToWorld(data.offsetX, data.offsetY, out tx, out ty);
 					bone.worldX += tx * translateMix;
 					bone.worldY += ty * translateMix;
 					modified = true;

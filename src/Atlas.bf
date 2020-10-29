@@ -27,20 +27,11 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#if (UNITY_5 || UNITY_5_3_OR_NEWER || UNITY_WSA || UNITY_WP8 || UNITY_WP8_1)
-#define IS_UNITY
-#endif
-
 using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-
-#if WINDOWS_STOREAPP
-using System.Threading.Tasks;
-using Windows.Storage;
-#endif
 
 namespace Spine {
 	public class Atlas : IEnumerable<AtlasRegion> {
@@ -58,25 +49,6 @@ namespace Spine {
 		}
 		#endregion
 
-		#if !(IS_UNITY)
-		#if WINDOWS_STOREAPP
-		private async Task ReadFile(String path, TextureLoader textureLoader) {
-			var folder = Windows.ApplicationModel.Package.Current.InstalledLocation;
-			var file = await folder.GetFileAsync(path).AsTask().ConfigureAwait(false);
-			using (var reader = new StreamReader(await file.OpenStreamForReadAsync().ConfigureAwait(false))) {
-				try {
-					Load(reader, Path.GetDirectoryName(path), textureLoader);
-				} catch (Exception ex) {
-					throw new Exception("Error reading atlas file: " + path, ex);
-				}
-			}
-		}
-
-		public Atlas(String path, TextureLoader textureLoader) {
-			this.ReadFile(path, textureLoader).Wait();
-		}
-		#else
-
 		public this (String path, TextureLoader textureLoader)
 		{
 			StreamReader reader = scope StreamReader();
@@ -89,9 +61,6 @@ namespace Spine {
 			//	throw new Exception("Error reading atlas file: " + path, ex);
 			//}
 		}
-		#endif // WINDOWS_STOREAPP
-
-		#endif
 
 		public this (StreamReader reader, String dir, TextureLoader textureLoader) {
 			Load(reader, dir, textureLoader);

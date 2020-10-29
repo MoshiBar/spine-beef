@@ -63,7 +63,6 @@ namespace Spine {
 			nextIdLock.Exit();
 		}
 
-		[Export, LinkName("VertexAttachment_ComputeWorldVertices")]
 		public void ComputeWorldVertices (Slot slot, float* worldVertices) {
 			ComputeWorldVertices(slot, 0, worldVerticesCount, worldVertices, 0);
 		}

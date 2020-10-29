@@ -361,7 +361,6 @@ namespace Spine {
 
 		public String ToString () => data.name;
 
-		[Export, LinkName("Bone_GetSkeleton")]
 		public Skeleton GetSkeleton() => skeleton;
 	}
 }

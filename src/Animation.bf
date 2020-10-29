@@ -72,9 +72,7 @@ namespace Spine {
 
 		/// <summary>Applies all the animation's timelines to the specified skeleton.</summary>
 		/// <seealso cref="Timeline.Apply(Skeleton, float, float, List, float, MixBlend, MixDirection)"/>
-		[Export, LinkName("Animation_Apply")]
-		public void Apply (Skeleton skeleton, float _lastTime, float _time, bool loop/*, List<Event> events*/, float alpha, MixBlend blend,
-							MixDirection direction) {
+		public void Apply (Skeleton skeleton, float _lastTime, float _time, bool loop/*, List<Event> events*/, float alpha, MixBlend blend, MixDirection direction) {
 			//if (skeleton == null) throw new ArgumentNullException("skeleton", "skeleton cannot be null.");
 			float time = _time, lastTime = _lastTime;
 			if (loop && duration != 0) {
@@ -93,7 +91,6 @@ namespace Spine {
 
 		/// <param name="target">After the first and before the last entry.</param>
 		/// <returns>Index of first value greater than the target.</returns>
-		[DisableChecks]
 		public static int BinarySearch (float[] values, float target, int step) {
 			int low = 0;
 			int high = values.Count / step - 2;
@@ -110,7 +107,6 @@ namespace Spine {
 		}
 
 		/// <param name="target">After the first and before the last entry.</param>
-		[DisableChecks]
 		public static int BinarySearch (float[] values, float target) {
 			int low = 0;
 			int high = values.Count - 2;
@@ -292,7 +288,6 @@ namespace Spine {
 		}
 
 		/// <summary>Returns the interpolated percentage for the specified key frame and linear percentage.</summary>
-		[DisableChecks]
 		public float GetCurvePercent (int frameIndex, float _percent) {
 			float percent = Math.Clamp(_percent, 0, 1);
 			float[] curves = this.curves;
@@ -353,7 +348,6 @@ namespace Spine {
 			frames[frameIndex + ROTATION] = degrees;
 		}
 
-		[DisableChecks]
 		override public void Apply (Skeleton skeleton, float lastTime, float time, List<Event> firedEvents, float alpha, MixBlend blend,
 									MixDirection direction) {
 			Bone bone = skeleton.bones[boneIndex];
@@ -454,7 +448,6 @@ namespace Spine {
 			frames[frameIndex + Y] = y;
 		}
 
-		[DisableChecks]
 		override public void Apply (Skeleton skeleton, float lastTime, float time, List<Event> firedEvents, float alpha, MixBlend blend,
 									MixDirection direction) {
 			Bone bone = skeleton.bones[boneIndex];
@@ -980,7 +973,6 @@ namespace Spine {
 			attachmentNames[frameIndex] = attachmentName;
 		}
 
-		[DisableChecks]
 		public void Apply (Skeleton skeleton, float lastTime, float time, List<Event> firedEvents, float alpha, MixBlend blend,
 							MixDirection direction) {
 			String attachmentName;

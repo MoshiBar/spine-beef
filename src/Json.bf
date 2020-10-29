@@ -111,7 +111,6 @@ namespace SharpJson
 		String json;
 		int index = 0;
 		bool success = true;
-		//char[] StringBuffer = new char[4096];
 
 		public this(String text)
 		{
@@ -129,9 +128,6 @@ namespace SharpJson
 
 		public String ParseString()
 		{
-			//int idx = 0;
-			//StringBuilder builder = null;
-
 			String parsed = new String();
 
 			SkipWhiteSpaces();
@@ -199,14 +195,6 @@ namespace SharpJson
 				} else {
 					parsed.Append(c);
 				}
-
-				/*if (idx >= StringBuffer.Count) {
-					if (builder == null)
-						builder = new StringBuilder();
-
-					builder.Append(StringBuffer, 0, idx);
-					idx = 0;
-				}*/
 			}
 
 			if (!complete) {
@@ -215,10 +203,6 @@ namespace SharpJson
 			}
 
 			return parsed;
-			/*if (builder != null)
-				return builder.ToString ();
-			else
-				return new String (StringBuffer, 0, idx);*/
 		}
 
 		String GetNumberString()
@@ -316,9 +300,7 @@ namespace SharpJson
 				return Token.Comma;
 			case '"':
 				return Token.String;
-			case '0': case '1': case '2': case '3': case '4':
-			case '5': case '6': case '7': case '8': case '9':
-			case '-':
+			case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-':
 				return Token.Number;
 			case ':':
 				return Token.Colon;
@@ -447,8 +429,6 @@ namespace SharpJson
 					break;
 				}
 			}
-
-			//return null; // Unreachable code
 		}
 
 		List<Object> ParseArray()
@@ -481,8 +461,6 @@ namespace SharpJson
 					break;
 				}
 			}
-
-			//return null; // Unreachable code
 		}
 
 		Object ParseValue()

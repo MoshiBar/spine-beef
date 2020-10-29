@@ -267,7 +267,7 @@ namespace Spine {
 					originalOutput.Add(output[i]);
 				}
 			} else {
-				originalOutput.GrowUnitialized(/*originalOutput.Count*/ - 2);
+				originalOutput.GrowUnitialized(-2);
 			}
 
 			return clipped;

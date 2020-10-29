@@ -128,18 +128,11 @@ namespace Spine
 		}
 
 		public List<List<float>> Decompose (List<float> vertices, List<int> triangles) {
-			//var vertices = verticesArray.Items;
 			var convexPolygons = this.convexPolygons;
-			/*for (int i = 0, n = convexPolygons.Count; i < n; i++) {
-				polygonPool.Free(convexPolygons.Items[i]);
-			}*/
 			polygonPool.FreeAll(convexPolygons);
 			convexPolygons.Clear();
 
 			var convexPolygonsIndices = this.convexPolygonsIndices;
-			/*for (int i = 0, n = convexPolygonsIndices.Count; i < n; i++) {
-				polygonIndicesPool.Free(convexPolygonsIndices.Items[i]);
-			}*/
 			polygonIndicesPool.FreeAll(convexPolygonsIndices);
 			convexPolygonsIndices.Clear();
 
@@ -151,7 +144,6 @@ namespace Spine
 
 			// Merge subsequent triangles if they form a triangle fan.
 			int fanBaseIndex = -1, lastWinding = 0;
-			//int[] trianglesItems = triangles.Items;
 			for (int i = 0, int n = triangles.Count; i < n; i += 3) {
 				int t1 = triangles[i] << 1, t2 = triangles[i + 1] << 1, t3 = triangles[i + 2] << 1;
 				float x1 = vertices[t1], y1 = vertices[t1 + 1];
