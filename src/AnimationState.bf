@@ -77,6 +77,7 @@ namespace Spine
 
 		protected AnimationStateData data ~ delete _;
 		private readonly List<TrackEntry> tracks = new .() ~ DeleteContainerAndItems!(_);
+
 		private readonly List<Event> events = new .() ~ delete _;
 		// difference to libgdx reference: delegates are used for event callbacks instead of 'final SnapshotArray<AnimationStateListener> listeners'.
 		public void OnStart (TrackEntry entry) { Start.Invoke(entry); }
@@ -881,7 +882,7 @@ namespace Spine
 	public class TrackEntry : Pool<TrackEntry>.IPoolable {
 		public Animation animation;
 
-		public TrackEntry next, mixingFrom, mixingTo;
+		public TrackEntry next ~ delete _, mixingFrom, mixingTo;
 
 		// difference to libgdx reference: delegates are used for event callbacks instead of 'AnimationStateListener listener'.
 		public Event<AnimationState.TrackEntryDelegate> Start, Interrupt, End, Dispose, Complete;
