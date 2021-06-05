@@ -1048,8 +1048,8 @@ namespace Spine {
 			frameVertices[frameIndex] = vertices;
 		}
 
-		override public void Apply (Skeleton skeleton, float lastTime, float time, List<Event> firedEvents, float _alpha, MixBlend _blend,
-									MixDirection direction)
+		[Optimize]
+		override public void Apply (Skeleton skeleton, float lastTime, float time, List<Event> firedEvents, float _alpha, MixBlend _blend, MixDirection direction)
 		{
 			float alpha = _alpha;
 			var blend = _blend;
@@ -1058,7 +1058,7 @@ namespace Spine {
 			VertexAttachment vertexAttachment = slot.attachment as VertexAttachment;
 			if (vertexAttachment == null || vertexAttachment.DeformAttachment != attachment) return;
 
-			var deformArray = slot.Deform;
+			var deformArray = slot.deform;
 			if (deformArray.Count == 0) blend = MixBlend.Setup;
 
 			float[][] frameVertices = this.frameVertices;
@@ -1078,9 +1078,7 @@ namespace Spine {
 						return;
 					}
 
-					// deformArray.SetSize(vertexCount) // Ensure size and preemptively set count.
-					if (deformArray.Capacity < vertexCount) deformArray.Capacity = vertexCount;
-					deformArray.GrowUnitialized(vertexCount - deformArray.Count);
+					deformArray.Count = vertexCount; // Ensure size and preemptively set count.
 					deform = deformArray.Ptr;
 
 					if (vertexAttachment.bones == null) {
@@ -1092,7 +1090,7 @@ namespace Spine {
 						// Weighted deform offsets.
 						alpha = 1 - alpha;
 						for (int i = 0; i < vertexCount; i++)
-							deform[i] *= alpha;
+							deform[[Unchecked]i] *= alpha;
 					}
 					return;
 				default:
@@ -1340,8 +1338,8 @@ namespace Spine {
 
 		public void Apply (Skeleton skeleton, float lastTime, float time, List<Event> firedEvents, float alpha, MixBlend blend,
 							MixDirection direction) {
-			List<Slot> drawOrder = skeleton.drawOrder;
-			List<Slot> slots = skeleton.slots;
+			var drawOrder = skeleton.drawOrder;
+			var slots = skeleton.slots;
 			if (direction == MixDirection.Out && blend == MixBlend.Setup) {
 				slots.CopyTo(drawOrder);
 				//Array.Copy(slots.Items, 0, drawOrder.Items, 0, slots.Count);

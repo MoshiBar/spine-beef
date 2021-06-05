@@ -36,7 +36,7 @@ namespace Spine {
 	public class SkeletonData {
 		public String name ~ delete _;
 		public List<BoneData> bones = new List<BoneData>() ~ DeleteContainerAndItems!(_); // Ordered parents first
-		public List<SlotData> slots = new List<SlotData>() ~ delete _; // Setup pose draw order.
+		public List<SlotData> slots = new List<SlotData>() ~ DeleteContainerAndItems!(_); // Setup pose draw order.
 		public List<Skin> skins = new List<Skin>() ~ DeleteContainerAndItems!(_);
 		public Skin defaultSkin;
 		public List<EventData> events = new List<EventData>() ~ DeleteContainerAndItems!(_);

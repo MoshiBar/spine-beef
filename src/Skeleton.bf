@@ -30,15 +30,23 @@
 using System;
 using System.Collections;
 
+//#define CUSTOMALLOCATOR
+
 namespace Spine {
 	public class Skeleton {
 		public SkeletonData data;
-		public List<Bone> bones ~ DeleteContainerAndItems!(_);
-		public List<Slot> slots ~ DeleteContainerAndItems!(_);
-		public List<Slot> drawOrder ~ delete _;
-		public List<IkConstraint> ikConstraints ~ DeleteContainerAndItems!(_);
-		public List<TransformConstraint> transformConstraints ~ DeleteContainerAndItems!(_);
-		public List<PathConstraint> pathConstraints ~ DeleteContainerAndItems!(_);
+#if CUSTOMALLOCATOR
+		public readonly ObjectSpan<Bone> bones ~ _.Dispose();
+		public readonly ObjectSpan<Slot> slots ~ _.Dispose();
+#else
+		public Bone[] bones ~ DeleteContainerAndItems!(_);
+		public Slot[] slots ~ DeleteContainerAndItems!(_);
+#endif
+		
+		public Slot[] drawOrder ~ delete _;
+		public IkConstraint[] ikConstraints ~ DeleteContainerAndItems!(_);
+		public TransformConstraint[] transformConstraints ~ DeleteContainerAndItems!(_);
+		public PathConstraint[] pathConstraints ~ DeleteContainerAndItems!(_);
 		public List<IUpdatable> updateCache = new List<IUpdatable>() ~ delete _;
 		public List<Bone> updateCacheReset = new List<Bone>() ~ delete _;
 		public Skin skin;
@@ -47,14 +55,6 @@ namespace Spine {
 		private float scaleX = 1, scaleY = 1;
 		public float x, y;
 
-		public SkeletonData Data { get { return data; } }
-		public List<Bone> Bones { get { return bones; } }
-		public List<IUpdatable> UpdateCacheList { get { return updateCache; } }
-		public List<Slot> Slots { get { return slots; } }
-		public List<Slot> DrawOrder { get { return drawOrder; } }
-		public List<IkConstraint> IkConstraints { get { return ikConstraints; } }
-		public List<PathConstraint> PathConstraints { get { return pathConstraints; } }
-		public List<TransformConstraint> TransformConstraints { get { return transformConstraints; } }
 		public Skin Skin { get { return skin; } set { SetSkin(value); } }
 		public float R { get { return r; } set { r = value; } }
 		public float G { get { return g; } set { g = value; } }
@@ -66,12 +66,6 @@ namespace Spine {
 		public float ScaleX { get { return scaleX; } set { scaleX = value; } }
 		public float ScaleY { get { return scaleY * (Bone.yDown ? -1 : 1); } set { scaleY = value; } }
 
-		//[Obsolete("Use ScaleX instead. FlipX is when ScaleX is negative.")]
-		//public bool FlipX { get { return scaleX < 0; } set { scaleX = value ? -1f : 1f; } }
-
-		//[Obsolete("Use ScaleY instead. FlipY is when ScaleY is negative.")]
-		//public bool FlipY { get { return scaleY < 0; } set { scaleY = value ? -1f : 1f; } }
-
 		public Bone RootBone {
 			get { return bones.Count == 0 ? null : bones[0]; }
 		}
@@ -80,39 +74,64 @@ namespace Spine {
 			//if (data == null) throw new ArgumentNullException("data", "data cannot be null.");
 			this.data = data;
 
-			bones = new List<Bone>(data.bones.Count);
-			for (BoneData boneData in data.bones) {
+#if CUSTOMALLOCATOR
+			bones = .(data.bones.Count);
+#else
+			bones = new Bone[data.bones.Count];
+#endif
+			
+			for(int i = 0, int count = data.bones.Count; i < count; i++){
+				BoneData boneData = data.bones[i];
 				Bone bone;
 				if (boneData.parent == null) {
+#if CUSTOMALLOCATOR
+					bone = new:bones Bone(boneData, this, null);
+#else
 					bone = new Bone(boneData, this, null);
+#endif
 				} else {
 					Bone parent = bones[boneData.parent.index];
+#if CUSTOMALLOCATOR
+					bone = new:bones Bone(boneData, this, parent);
+#else
 					bone = new Bone(boneData, this, parent);
+#endif
 					parent.children.Add(bone);
 				}
-				bones.Add(bone);
+#if !CUSTOMALLOCATOR
+				bones[i] = bone;
+#endif
 			}
 
-			slots = new List<Slot>(data.slots.Count);
-			drawOrder = new List<Slot>(data.slots.Count);
-			for (SlotData slotData in data.slots) {
+#if CUSTOMALLOCATOR
+			slots = .(data.slots.Count);
+#else
+			slots = new Slot[data.slots.Count];
+#endif
+			drawOrder = new Slot[data.slots.Count];
+			for(int i = 0, int count = data.slots.Count; i < count; i++){
+				SlotData slotData = data.slots[i];
 				Bone bone = bones[slotData.boneData.index];
+#if CUSTOMALLOCATOR
+				Slot slot = new:slots Slot(slotData, bone);
+#else
 				Slot slot = new Slot(slotData, bone);
-				slots.Add(slot);
-				drawOrder.Add(slot);
+				slots[i] = slot;
+#endif
+				drawOrder[i] = slot;
 			}
 
-			ikConstraints = new List<IkConstraint>(data.ikConstraints.Count);
-			for (IkConstraintData ikConstraintData in data.ikConstraints)
-				ikConstraints.Add(new IkConstraint(ikConstraintData, this));
+			ikConstraints = new IkConstraint[data.ikConstraints.Count];
+			for(int i = 0, int count = data.ikConstraints.Count; i < count; i++)
+				ikConstraints[i] = new IkConstraint(data.ikConstraints[i], this);
 
-			transformConstraints = new List<TransformConstraint>(data.transformConstraints.Count);
-			for (TransformConstraintData transformConstraintData in data.transformConstraints)
-				transformConstraints.Add(new TransformConstraint(transformConstraintData, this));
+			transformConstraints = new TransformConstraint[data.transformConstraints.Count];
+			for(int i = 0, int count = data.transformConstraints.Count; i < count; i++)
+				transformConstraints[i] = new TransformConstraint(data.transformConstraints[i], this);
 
-			pathConstraints = new List<PathConstraint> (data.pathConstraints.Count);
-			for (PathConstraintData pathConstraintData in data.pathConstraints)
-				pathConstraints.Add(new PathConstraint(pathConstraintData, this));
+			pathConstraints = new PathConstraint[data.pathConstraints.Count];
+			for(int i = 0, int count = data.pathConstraints.Count; i < count; i++)
+				pathConstraints[i] = new PathConstraint(data.pathConstraints[i], this);
 
 			UpdateCache();
 			UpdateWorldTransform();
@@ -302,9 +321,8 @@ namespace Spine {
 		/// <summary>Updates the world transform for each bone and applies constraints.</summary>
 		public void UpdateWorldTransform () {
 			var updateCacheReset = this.updateCacheReset;
-			var updateCacheResetItems = updateCacheReset;
 			for (int i = 0, int n = updateCacheReset.Count; i < n; i++) {
-				Bone bone = updateCacheResetItems[i];
+				Bone bone = updateCacheReset[i];
 				bone.ax = bone.x;
 				bone.ay = bone.y;
 				bone.arotation = bone.rotation;
@@ -328,9 +346,8 @@ namespace Spine {
 			// before the constraint, 2) the constraint only needs to access the applied local transform, and 3) the constraint calls
 			// updateWorldTransform.
 			var updateCacheReset = this.updateCacheReset;
-			var updateCacheResetItems = updateCacheReset;
 			for (int i = 0, int n = updateCacheReset.Count; i < n; i++) {
-				Bone bone = updateCacheResetItems[i];
+				Bone bone = updateCacheReset[i];
 				bone.ax = bone.x;
 				bone.ay = bone.y;
 				bone.arotation = bone.rotation;
@@ -412,9 +429,10 @@ namespace Spine {
 
 		public void SetSlotsToSetupPose () {
 			var slots = this.slots;
-			drawOrder.Clear();
-			for (int i = 0, int n = slots.Count; i < n; i++)
-				drawOrder.Add(slots[i]);
+			//drawOrder.Clear();
+			slots.CopyTo(drawOrder);
+			/*for (int i = 0, int n = slots.Count; i < n; i++)
+				drawOrder.Add(slots[i]);*/
 
 			for (int i = 0, int n = slots.Count; i < n; i++)
 				slots[i].SetToSetupPose();
@@ -487,7 +505,7 @@ namespace Spine {
 				if (skin != null)
 					newSkin.AttachAll(this, skin);
 				else {
-					List<Slot> slots = this.slots;
+					var slots = this.slots;
 					for (int i = 0, int n = slots.Count; i < n; i++) {
 						Slot slot = slots[i];
 						String name = slot.data.attachmentName;
@@ -523,7 +541,7 @@ namespace Spine {
 		/// <param name="attachmentName">May be null to clear the slot's attachment.</param>
 		public void SetAttachment (String slotName, String attachmentName) {
 			//if (slotName == null) throw new ArgumentNullException("slotName", "slotName cannot be null.");
-			List<Slot> slots = this.slots;
+			var slots = this.slots;
 			for (int i = 0, int n = slots.Count; i < n; i++) {
 				Slot slot = slots[i];
 				if (slot.data.name == slotName) {
@@ -542,7 +560,7 @@ namespace Spine {
 		/// <returns>May be null.</returns>
 		public IkConstraint FindIkConstraint (String constraintName) {
 			//if (constraintName == null) throw new ArgumentNullException("constraintName", "constraintName cannot be null.");
-			List<IkConstraint> ikConstraints = this.ikConstraints;
+			var ikConstraints = this.ikConstraints;
 			for (int i = 0, int n = ikConstraints.Count; i < n; i++) {
 				IkConstraint ikConstraint = ikConstraints[i];
 				if (ikConstraint.data.name == constraintName) return ikConstraint;
@@ -553,7 +571,7 @@ namespace Spine {
 		/// <returns>May be null.</returns>
 		public TransformConstraint FindTransformConstraint (String constraintName) {
 			//if (constraintName == null) throw new ArgumentNullException("constraintName", "constraintName cannot be null.");
-			List<TransformConstraint> transformConstraints = this.transformConstraints;
+			var transformConstraints = this.transformConstraints;
 			for (int i = 0, int n = transformConstraints.Count; i < n; i++) {
 				TransformConstraint transformConstraint = transformConstraints[i];
 				if (transformConstraint.data.Name == constraintName) return transformConstraint;
@@ -564,7 +582,7 @@ namespace Spine {
 		/// <returns>May be null.</returns>
 		public PathConstraint FindPathConstraint (String constraintName) {
 			//if (constraintName == null) throw new ArgumentNullException("constraintName", "constraintName cannot be null.");
-			List<PathConstraint> pathConstraints = this.pathConstraints;
+			var pathConstraints = this.pathConstraints;
 			for (int i = 0, int n = pathConstraints.Count; i < n; i++) {
 				PathConstraint constraint = pathConstraints[i];
 				if (constraint.data.Name.Equals(constraintName)) return constraint;
@@ -584,7 +602,7 @@ namespace Spine {
 		/// <param name="vertexBuffer">Reference to hold a float[]. May be a null reference. This method will assign it a new float[] with the appropriate size as needed.</param>
 		public void GetBounds (out float x, out float y, out float width, out float height, ref float[] vertexBuffer) {
 			float[] temp = vertexBuffer;
-			temp = temp ?? new float[8];
+			temp = temp ?? scope float[8];
 			var drawOrderItems = this.drawOrder;
 			float minX = int32.MaxValue, minY = int32.MaxValue, maxX = int32.MinValue, maxY = int32.MinValue;
 			for (int i = 0, int n = drawOrderItems.Count; i < n; i++) {
@@ -597,7 +615,7 @@ namespace Spine {
 				if (regionAttachment != null) {
 					verticesCount = 8;
 					vertices = temp;
-					if (vertices.Count < 8) vertices = temp = new float[8];
+					if (vertices.Count < 8) vertices = temp = scope:: float[8];
 					regionAttachment.ComputeWorldVertices(slot.bone, temp, 0);
 				} else {
 					var meshAttachment = attachment as MeshAttachment;

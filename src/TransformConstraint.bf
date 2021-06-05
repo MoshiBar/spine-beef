@@ -69,8 +69,8 @@ namespace Spine {
 			data = constraint.data;
 			bones = new List<Bone>(constraint.Bones.Count);
 			for (Bone bone in constraint.Bones)
-				bones.Add(skeleton.Bones[bone.data.index]);
-			target = skeleton.Bones[constraint.target.data.index];
+				bones.Add(skeleton.bones[bone.data.index]);
+			target = skeleton.bones[constraint.target.data.index];
 			rotateMix = constraint.rotateMix;
 			translateMix = constraint.translateMix;
 			scaleMix = constraint.scaleMix;
@@ -109,12 +109,12 @@ namespace Spine {
 
 				if (rotateMix != 0) {
 					float a = bone.a, b = bone.b, c = bone.c, d = bone.d;
-					float r = MathUtils.Atan2(tc, ta) - MathUtils.Atan2(c, a) + offsetRotation;
+					float r = Math.Atan2(tc, ta) - Math.Atan2(c, a) + offsetRotation;
 					if (r > MathUtils.PI)
 						r -= MathUtils.PI2;
 					else if (r < -MathUtils.PI) r += MathUtils.PI2;
 					r *= rotateMix;
-					float cos = MathUtils.Cos(r), sin = MathUtils.Sin(r);
+					float cos = Math.Cos(r), sin = Math.Sin(r);
 					bone.a = cos * a - sin * c;
 					bone.b = cos * b - sin * d;
 					bone.c = sin * a + cos * c;
@@ -144,15 +144,15 @@ namespace Spine {
 
 				if (shearMix > 0) {
 					float b = bone.b, d = bone.d;
-					float by = MathUtils.Atan2(d, b);
-					float r = MathUtils.Atan2(td, tb) - MathUtils.Atan2(tc, ta) - (by - MathUtils.Atan2(bone.c, bone.a));
+					float by = Math.Atan2(d, b);
+					float r = Math.Atan2(td, tb) - Math.Atan2(tc, ta) - (by - Math.Atan2(bone.c, bone.a));
 					if (r > MathUtils.PI)
 						r -= MathUtils.PI2;
 					else if (r < -MathUtils.PI) r += MathUtils.PI2;
 					r = by + (r + offsetShearY) * shearMix;
 					float s = Math.Sqrt(b * b + d * d);
-					bone.b = MathUtils.Cos(r) * s;
-					bone.d = MathUtils.Sin(r) * s;
+					bone.b = Math.Cos(r) * s;
+					bone.d = Math.Sin(r) * s;
 					modified = true;
 				}
 
@@ -173,12 +173,12 @@ namespace Spine {
 
 				if (rotateMix != 0) {
 					float a = bone.a, b = bone.b, c = bone.c, d = bone.d;
-					float r = MathUtils.Atan2(tc, ta) + offsetRotation;
+					float r = Math.Atan2(tc, ta) + offsetRotation;
 					if (r > MathUtils.PI)
 						r -= MathUtils.PI2;
 					else if (r < -MathUtils.PI) r += MathUtils.PI2;
 					r *= rotateMix;
-					float cos = MathUtils.Cos(r), sin = MathUtils.Sin(r);
+					float cos = Math.Cos(r), sin = Math.Sin(r);
 					bone.a = cos * a - sin * c;
 					bone.b = cos * b - sin * d;
 					bone.c = sin * a + cos * c;
@@ -205,15 +205,15 @@ namespace Spine {
 				}
 
 				if (shearMix > 0) {
-					float r = MathUtils.Atan2(td, tb) - MathUtils.Atan2(tc, ta);
+					float r = Math.Atan2(td, tb) - Math.Atan2(tc, ta);
 					if (r > MathUtils.PI)
 						r -= MathUtils.PI2;
 					else if (r < -MathUtils.PI) r += MathUtils.PI2;
 					float b = bone.b, d = bone.d;
-					r = MathUtils.Atan2(d, b) + (r - MathUtils.PI / 2 + offsetShearY) * shearMix;
+					r = Math.Atan2(d, b) + (r - MathUtils.PI / 2 + offsetShearY) * shearMix;
 					float s = Math.Sqrt(b * b + d * d);
-					bone.b = MathUtils.Cos(r) * s;
-					bone.d = MathUtils.Sin(r) * s;
+					bone.b = Math.Cos(r) * s;
+					bone.d = Math.Sin(r) * s;
 					modified = true;
 				}
 

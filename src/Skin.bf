@@ -43,10 +43,10 @@ namespace Spine {
 		public readonly List<BoneData> bones = new List<BoneData>() ~ delete _;
 		public readonly List<ConstraintData> constraints = new List<ConstraintData>() ~ DeleteContainerAndItems!(_);
 
-		public String Name { get { return name; } }
-		public OrderedDictionary<SkinEntry, Attachment> Attachments { get { return attachments; } }
-		public List<BoneData> Bones { get { return bones; } }
-		public List<ConstraintData> Constraints { get { return constraints; } }
+		public String Name => name;
+		public OrderedDictionary<SkinEntry, Attachment> Attachments => attachments;
+		public List<BoneData> Bones => bones;
+		public List<ConstraintData> Constraints => constraints;
 
 		public this (String name) {
 			//if (name == null) throw new ArgumentNullException("name", "name cannot be null.");

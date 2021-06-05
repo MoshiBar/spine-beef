@@ -103,7 +103,7 @@ namespace Spine {
 				v += n + 1;
 				skip += n;
 			}
-			var skeletonBones = skeleton.bones.Ptr;
+			var skeletonBones = skeleton.bones;
 			if (deformArray.Count == 0) {
 				for (int w = offset, int b = skip * 3; w < count; w += stride) {
 					float wx = 0, wy = 0;

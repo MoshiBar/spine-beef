@@ -57,7 +57,7 @@ namespace Spine {
 		private List<SkeletonJson.LinkedMesh> linkedMeshes = new List<SkeletonJson.LinkedMesh>() ~ DeleteContainerAndItems!(_);
 
 		public this (params Atlas[] atlasArray)
-			: this(new AtlasAttachmentLoader(atlasArray)) {
+			: this(new AtlasAttachmentLoader(atlasArray.CopyTo(..new Atlas[atlasArray.Count]))) {
 		}
 
 		public this (AttachmentLoader attachmentLoader) {
@@ -66,16 +66,15 @@ namespace Spine {
 			Scale = 1;
 		}
 
-		public SkeletonData ReadSkeletonData (String path)
+		public void ReadSkeletonData (SkeletonData skeletonData, String path)
 		{
 			var input = scope FileStream();
 			input.Open(path, .Read, .Read, 4096, .None, null);
-
-			SkeletonData skeletonData = ReadSkeletonData(input);
+			ReadSkeletonData(skeletonData, input);
 			String name = new String();
 			Path.GetFileNameWithoutExtension(path, name);
 			skeletonData.name = name;
-			return skeletonData;
+			//return skeletonData;
 		}
 
 		public static readonly TransformMode[] TransformModeValues = new TransformMode[] (
@@ -87,23 +86,22 @@ namespace Spine {
 		) ~ delete _;
 
 		/// <summary>Returns the version String of binary skeleton data.</summary>
-		public static void GetVersionString (Stream file, String strBuffer) {
+		public static void GetVersionString(FileStream file, String strBuffer) {
 			//if (file == null) throw new ArgumentNullException("file");
-
+			
 			SkeletonInput input = scope SkeletonInput(file);
 			input.GetVersionString(strBuffer);
 		}
 
-		public SkeletonData ReadSkeletonData (Stream file) {
+		public void ReadSkeletonData(SkeletonData skeletonData, FileStream file){
 			//if (file == null) throw new ArgumentNullException("file");
 			float scale = Scale;
 
-			var skeletonData = new SkeletonData();
 			SkeletonInput input = scope SkeletonInput(file);
 
-			skeletonData.hash = input.ReadString(new .());
+			skeletonData.hash = input.ReadString(..new .());
 			if (skeletonData.hash.Length == 0) delete skeletonData.hash;//skeletonData.hash = null;
-			skeletonData.version = input.ReadString(new .());
+			skeletonData.version = input.ReadString(..new .());
 			if (skeletonData.version.Length == 0) delete skeletonData.version;//skeletonData.version = null;
 			//if ("3.8.75" == skeletonData.version)
 					//throw new Exception("Unsupported skeleton data, please export with a newer version of Spine.");
@@ -117,10 +115,10 @@ namespace Spine {
 			if (nonessential) {
 				skeletonData.fps = input.ReadFloat();
 
-				skeletonData.imagesPath = input.ReadString(new .());
+				skeletonData.imagesPath = input.ReadString(..new .());
 				if (String.IsNullOrEmpty(skeletonData.imagesPath)) delete skeletonData.imagesPath; //skeletonData.imagesPath = null;
 
-				skeletonData.audioPath = input.ReadString(new .());
+				skeletonData.audioPath = input.ReadString(..new .());
 				if (String.IsNullOrEmpty(skeletonData.audioPath)) delete skeletonData.audioPath; //skeletonData.audioPath = null;
 			}
 
@@ -129,14 +127,14 @@ namespace Spine {
 			input.Strings = new List<String>(n = input.ReadInt(true));
 			//input.Strings.Resize(n);
 			for (int i = 0; i < n; i++)
-				input.Strings.Add(input.ReadString(new .()));
+				input.Strings.Add(input.ReadString(..new .()));
 			defer ClearAndDeleteItems(input.Strings);
 
 			// Bones.
 			//skeletonData.bones.Resize(n = input.ReadInt(true));
-			skeletonData.bones.GrowUnitialized(n = input.ReadInt(true));//TODO: assumes the list's count is zero
-			for (int i = 0; i < n; i++) {
-				String name = input.ReadString(new .());
+			skeletonData.bones.Count = n = input.ReadInt(true);//TODO: assumes the list's count is zero
+			for (int i < n) {
+				String name = input.ReadString(..new .());
 				BoneData parent = i == 0 ? null : skeletonData.bones[input.ReadInt(true)];
 				BoneData data = new BoneData(i, name, parent);
 				data.rotation = input.ReadFloat();
@@ -153,9 +151,9 @@ namespace Spine {
 				skeletonData.bones[i] = data;
 			}
 			// Slots.
-			skeletonData.slots.GrowUnitialized(n = input.ReadInt(true));
-			for (int i = 0; i < n; i++) {
-				String slotName = input.ReadString(new .());
+			skeletonData.slots.Count = n = input.ReadInt(true);
+			for (int i < n) {
+				String slotName = input.ReadString(..new .());
 				BoneData boneData = skeletonData.bones[input.ReadInt(true)];
 				SlotData slotData = new SlotData(i, slotName, boneData);
 				int color = input.ReadInt();
@@ -177,14 +175,17 @@ namespace Spine {
 				skeletonData.slots[i] = slotData;
 			}
 			// IK constraints.
-			skeletonData.ikConstraints.GrowUnitialized(n = input.ReadInt(true));
-			for (int i = 0, int nn; i < n; i++) {
-				IkConstraintData data = new IkConstraintData(input.ReadString(new .()));
+			skeletonData.ikConstraints.Count = n = input.ReadInt(true);
+			for (int i = 0; i < n; i++) {
+				IkConstraintData data = new IkConstraintData(input.ReadString(..new .()));
 				data.order = input.ReadInt(true);
 				data.skinRequired = input.ReadBoolean();
-				data.bones.GrowUnitialized(nn = input.ReadInt(true));
-				for (int ii = 0; ii < nn; ii++)
+
+				int boneCount = input.ReadInt(true);
+				data.bones = new BoneData[boneCount];
+				for (int ii < boneCount)
 					data.bones[ii] = skeletonData.bones[input.ReadInt(true)];
+
 				data.target = skeletonData.bones[input.ReadInt(true)];
 				data.mix = input.ReadFloat();
 				data.softness = input.ReadFloat() * scale;
@@ -195,14 +196,17 @@ namespace Spine {
 				skeletonData.ikConstraints[i] = data;
 			}
 			// Transform constraints.
-			skeletonData.transformConstraints.GrowUnitialized(n = input.ReadInt(true));
-			for (int i = 0, int nn; i < n; i++) {
-				TransformConstraintData data = new TransformConstraintData(input.ReadString(new .()));
+			skeletonData.transformConstraints.Count = n = input.ReadInt(true);
+			for (int i = 0; i < n; i++) {
+				TransformConstraintData data = new TransformConstraintData(input.ReadString(..new .()));
 				data.order = input.ReadInt(true);
 				data.skinRequired = input.ReadBoolean();
-				var bones = data.bones..GrowUnitialized(nn = input.ReadInt(true));
-				for (int ii = 0; ii < nn; ii++)
-					bones[ii] = skeletonData.bones[input.ReadInt(true)];
+
+				int boneCount = input.ReadInt(true);
+				data.bones = new BoneData[boneCount];
+				for (int ii < boneCount)
+					data.bones[ii] = skeletonData.bones[input.ReadInt(true)];
+
 				data.target = skeletonData.bones[input.ReadInt(true)];
 				data.local = input.ReadBoolean();
 				data.relative = input.ReadBoolean();
@@ -219,14 +223,17 @@ namespace Spine {
 				skeletonData.transformConstraints[i] = data;
 			}
 			// Path constraints
-			skeletonData.pathConstraints.GrowUnitialized(n = input.ReadInt(true));
-			for (int i = 0, int nn; i < n; i++) {
-				PathConstraintData data = new PathConstraintData(input.ReadString(new .()));
+			skeletonData.pathConstraints.Count = n = input.ReadInt(true);
+			for (int i = 0; i < n; i++) {
+				PathConstraintData data = new PathConstraintData(input.ReadString(..new .()));
 				data.order = input.ReadInt(true);
 				data.skinRequired = input.ReadBoolean();
-				data.bones.GrowUnitialized(nn = input.ReadInt(true));
-				for (int ii = 0; ii < nn; ii++)
+
+				int boneCount = input.ReadInt(true);
+				data.bones = new BoneData[boneCount];
+				for (int ii < boneCount)
 					data.bones[ii] = skeletonData.bones[input.ReadInt(true)];
+
 				data.target = skeletonData.slots[input.ReadInt(true)];
 				data.positionMode = (PositionMode)input.ReadInt(true);
 				data.spacingMode = (SpacingMode)input.ReadInt(true);
@@ -268,13 +275,13 @@ namespace Spine {
 			}
 			linkedMeshes.Clear();
 			// Events.
-			skeletonData.events.GrowUnitialized(n = input.ReadInt(true));
+			skeletonData.events.Count = n = input.ReadInt(true);
 			for (int i = 0; i < n; i++) {
 				EventData data = new EventData(input.ReadStringRef());
 				data.Int = input.ReadInt(false);
 				data.Float = input.ReadFloat();
-				data.string = input.ReadString(new .());
-				data.AudioPath = input.ReadString(new .());
+				data.string = input.ReadString(..new .());
+				data.AudioPath = input.ReadString(..new .());
 				if (data.AudioPath.Length > 0) {
 					data.Volume = input.ReadFloat();
 					data.Balance = input.ReadFloat();
@@ -285,9 +292,9 @@ namespace Spine {
 			n = input.ReadInt(true);
 			skeletonData.animations.GrowUnitialized(n);
 			for (int i = 0; i < n; i++)
-				skeletonData.animations[i] = ReadAnimation(input.ReadString(new .()), input, skeletonData);
+				skeletonData.animations[i] = ReadAnimation(input.ReadString(..new .()), input, skeletonData);
 
-			return skeletonData;
+			//return skeletonData;
 		}
 
 
@@ -789,7 +796,7 @@ namespace Spine {
 			if (drawOrderCount > 0) {
 				DrawOrderTimeline timeline = new DrawOrderTimeline(drawOrderCount);
 				int slotCount = skeletonData.slots.Count;
-				for (int i = 0; i < drawOrderCount; i++) {
+				for (int i < drawOrderCount) {
 					float time = input.ReadFloat();
 					int offsetCount = input.ReadInt(true);
 					int[] drawOrder = new int[slotCount];
@@ -821,13 +828,13 @@ namespace Spine {
 			int eventCount = input.ReadInt(true);
 			if (eventCount > 0) {
 				EventTimeline timeline = new EventTimeline(eventCount);
-				for (int i = 0; i < eventCount; i++) {
+				for (int i < eventCount) {
 					float time = input.ReadFloat();
 					EventData eventData = skeletonData.events[input.ReadInt(true)];
 					Event e = new Event(time, eventData) {
 						Int = input.ReadInt(false),
 						Float = input.ReadFloat(),
-						String = input.ReadBoolean() ? input.ReadString(new String()) : new String(eventData.string)
+						String = input.ReadBoolean() ? input.ReadString(..new .()) : new .(eventData.string)
 					};
 
 					if (e.data.AudioPath.Length > 0/* != null*/) {
@@ -862,11 +869,10 @@ namespace Spine {
 		}
 
 		public class SkeletonInput {
-			private uint8[] chars = new uint8[32] ~ delete _;
 			public List<String> Strings ~ DeleteContainerAndItems!(_);
-			Stream input;
+			FileStream input;
 
-			public this (Stream input) {
+			public this (FileStream input) {
 				this.input = input;
 			}
 
@@ -881,7 +887,7 @@ namespace Spine {
 
 			public int8 ReadSByte () {
 				int value = input.Read<uint8>().Get(0);
-				//if (value == -1) throw new EndOfStreamException();
+				//if (value == -1) throw new EndOfFileStreamException();
 				return (int8)value;
 			}
 
@@ -890,6 +896,7 @@ namespace Spine {
 			}
 
 			public float ReadFloat () {
+				uint8[4] chars;
 				chars[3] = (uint8)input.Read<uint8>().Get(0);
 				chars[2] = (uint8)input.Read<uint8>().Get(0);
 				chars[1] = (uint8)input.Read<uint8>().Get(0);
@@ -898,7 +905,9 @@ namespace Spine {
 			}
 
 			public int ReadInt () {
-				return ((int)input.Read<uint8>().Get(0) << 24) + ((int)input.Read<uint8>().Get(0) << 16) + ((int)input.Read<uint8>().Get(0) << 8) + input.Read<uint8>().Get(0);
+				//return ((int)input.Read<uint8>().Get(0) << 24) + ((int)input.Read<uint8>().Get(0) << 16) + ((int)input.Read<uint8>().Get(0) << 8) + input.Read<uint8>().Get(0);
+				var val = input.Read<uint32>().Get(0);
+				return val;
 			}
 
 			public int ReadInt (bool optimizePositive) {
@@ -920,21 +929,15 @@ namespace Spine {
 				return optimizePositive ? result : ((result >> 1) ^ -(result & 1));
 			}
 
-			public String ReadString (String strBuffer) {
+			public void ReadString (String strBuffer) {
 				int byteCount = ReadInt(true);
-				switch (byteCount) {
-				case 0:
-					return strBuffer;
-				case 1:
-					return strBuffer;
-				}
+				if(byteCount <= 1) return;
 				byteCount--;
 				uint8[] buffer = scope uint8[byteCount]; //this.chars;
 				
 				ReadFully(buffer, 0, byteCount);
 
 				System.Text.Encoding.UTF8.DecodeToUTF8(Span<uint8>(buffer, 0, byteCount), strBuffer);
-				return strBuffer;
 			}
 			///<return>May be null.</return>
 			public String ReadStringRef () {
@@ -962,7 +965,7 @@ namespace Spine {
 						
 					}
 					//int count = input.Read<int>(buffer, offset, Count);
-					//if (count <= 0) throw new EndOfStreamException();
+					//if (count <= 0) throw new EndOfFileStreamException();
 					offset += count;
 					Count -= count;
 				}
@@ -984,9 +987,9 @@ namespace Spine {
 
 						System.Text.Encoding.UTF8.DecodeToUTF8(Span<uint8>(buffer, 0, byteCount), strBuffer);
 					}
-				//	throw new ArgumentException("Stream does not contain a valid binary Skeleton Data.", "input");
+				//	throw new ArgumentException("FileStream does not contain a valid binary Skeleton Data.", "input");
 				//} catch (Exception e) {
-				//	throw new ArgumentException("Stream does not contain a valid binary Skeleton Data.\n" + e, "input");
+				//	throw new ArgumentException("FileStream does not contain a valid binary Skeleton Data.\n" + e, "input");
 				//}
 			}
 		}

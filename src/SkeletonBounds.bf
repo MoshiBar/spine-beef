@@ -65,7 +65,7 @@ namespace Spine {
 		public void Update (Skeleton skeleton, bool updateAabb) {
 			List<BoundingBoxAttachment> boundingBoxes = BoundingBoxes;
 			List<Polygon> polygons = Polygons;
-			List<Slot> slots = skeleton.slots;
+			var slots = skeleton.slots;
 			int slotCount = slots.Count;
 
 			boundingBoxes.Clear();

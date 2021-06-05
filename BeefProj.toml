@@ -2,5 +2,8 @@ FileVersion = 1
 
 [Project]
 Name = "spine-beef"
-TargetType = "BeefLib"
 DefaultNamespace = "Spine"
+
+[Configs.Debug.Win64]
+VectorizeLoops = true
+VectorizeSLP = true

@@ -54,7 +54,7 @@ namespace Spine {
 			float cos = MathUtils.CosDeg(rotation), sin = MathUtils.SinDeg(rotation);
 			float ix = cos * bone.a + sin * bone.b;
 			float iy = cos * bone.c + sin * bone.d;
-			return MathUtils.Atan2(iy, ix) * MathUtils.RadDeg;
+			return Math.Atan2(iy, ix) * MathUtils.RadDeg;
 		}
 
 		public override Attachment Copy () {

@@ -58,7 +58,7 @@ namespace Spine {
 			//if (data == null) throw new ArgumentNullException("data", "data cannot be null.");
 			//if (skeleton == null) throw new ArgumentNullException("skeleton", "skeleton cannot be null.");
 			this.data = data;
-			bones = new List<Bone>(data.Bones.Count);
+			bones = new List<Bone>(data.bones.Count);
 			for (BoneData boneData in data.bones)
 				bones.Add(skeleton.FindBone(boneData.name));
 			target = skeleton.FindSlot(data.target.name);
@@ -75,7 +75,7 @@ namespace Spine {
 			data = constraint.data;
 			bones = new List<Bone>(constraint.Bones.Count);
 			for (Bone bone in constraint.Bones)
-				bones.Add(skeleton.Bones[bone.data.index]);
+				bones.Add(skeleton.bones[bone.data.index]);
 			target = skeleton.slots[constraint.target.data.index];
 			position = constraint.position;
 			spacing = constraint.spacing;
@@ -166,11 +166,11 @@ namespace Spine {
 					else if (spaces[i + 1] < PathConstraint.Epsilon)
 						r = positions[p + 2];
 					else
-						r = MathUtils.Atan2(dy, dx);
-					r -= MathUtils.Atan2(c, a);
+						r = Math.Atan2(dy, dx);
+					r -= Math.Atan2(c, a);
 					if (tip) {
-						cos = MathUtils.Cos(r);
-						sin = MathUtils.Sin(r);
+						cos = Math.Cos(r);
+						sin = Math.Sin(r);
 						float Count = bone.data.Length;
 						boneX += (Count * (cos * a - sin * c) - dx) * rotateMix;
 						boneY += (Count * (sin * a + cos * c) - dy) * rotateMix;
@@ -181,8 +181,8 @@ namespace Spine {
 					else if (r < -MathUtils.PI) //
 						r += MathUtils.PI2;
 					r *= rotateMix;
-					cos = MathUtils.Cos(r);
-					sin = MathUtils.Sin(r);
+					cos = Math.Cos(r);
+					sin = Math.Sin(r);
 					bone.a = cos * a - sin * c;
 					bone.b = cos * b - sin * d;
 					bone.c = sin * a + cos * c;
@@ -417,16 +417,16 @@ namespace Spine {
 		}
 
 		static void AddBeforePosition (float p, float* temp, int i, float* output, int o) {
-			float x1 = temp[i], y1 = temp[i + 1], dx = temp[i + 2] - x1, dy = temp[i + 3] - y1, r = MathUtils.Atan2(dy, dx);
-			output[o] = x1 + p * MathUtils.Cos(r);
-			output[o + 1] = y1 + p * MathUtils.Sin(r);
+			float x1 = temp[i], y1 = temp[i + 1], dx = temp[i + 2] - x1, dy = temp[i + 3] - y1, r = Math.Atan2(dy, dx);
+			output[o] = x1 + p * Math.Cos(r);
+			output[o + 1] = y1 + p * Math.Sin(r);
 			output[o + 2] = r;
 		}
 
 		static void AddAfterPosition (float p, float* temp, int i, float* output, int o) {
-			float x1 = temp[i + 2], y1 = temp[i + 3], dx = x1 - temp[i], dy = y1 - temp[i + 1], r = MathUtils.Atan2(dy, dx);
-			output[o] = x1 + p * MathUtils.Cos(r);
-			output[o + 1] = y1 + p * MathUtils.Sin(r);
+			float x1 = temp[i + 2], y1 = temp[i + 3], dx = x1 - temp[i], dy = y1 - temp[i + 1], r = Math.Atan2(dy, dx);
+			output[o] = x1 + p * Math.Cos(r);
+			output[o + 1] = y1 + p * Math.Sin(r);
 			output[o + 2] = r;
 		}
 

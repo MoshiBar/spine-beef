@@ -486,6 +486,10 @@ namespace Spine.Collections
 			Dictionary<TKey, int>.Enumerator GetEnumerator () {
 				return dictionary.GetEnumerator();
 			}
+			public void CopyTo(Span<TKey> span)
+			{
+
+			}
 		}
 
 		/// <summary>
@@ -564,6 +568,10 @@ namespace Spine.Collections
 			/*IEnumerator IEnumerable.GetEnumerator () {
 				return GetEnumerator();
 			}*/
+			public void CopyTo(Span<TValue> span)
+			{
+				values.CopyTo(span);
+			}
 		}
 	}
 

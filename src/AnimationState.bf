@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 
 namespace Spine
 {
@@ -97,6 +98,8 @@ namespace Spine
 		private float timeScale = 1;
 
 		private readonly Pool<TrackEntry> trackEntryPool = new Pool<TrackEntry>() ~ delete _;
+
+		public this(SkeletonData data) : this(new AnimationStateData(data)){}
 
 		public this (AnimationStateData data) {
 			this.data = data/* ?? throw new ArgumentNullException("data", "data cannot be null.")*/;
@@ -879,6 +882,7 @@ namespace Spine
 		public Animation animation;
 
 		public TrackEntry next, mixingFrom, mixingTo;
+
 		// difference to libgdx reference: delegates are used for event callbacks instead of 'AnimationStateListener listener'.
 		public Event<AnimationState.TrackEntryDelegate> Start, Interrupt, End, Dispose, Complete;
 		public Event<AnimationState.TrackEntryEventDelegate> Event;
@@ -1263,7 +1267,14 @@ namespace Spine
 		public this (int initialCapacity = 16, int max = int32.MaxValue) {
 			freeObjects = new List<T>(initialCapacity);
 			this.max = max;
-			resettable = typeof(T) is IPoolable;// typeof(IPoolable).IsAssignableFrom(typeof(T));
+
+			//corlib doesn't really have an interface check so i implemented it here
+			for(var _interface in typeof(T).Interfaces)
+				if(_interface.TypeId == typeof(IPoolable).TypeId) {
+				resettable = true;
+				break;
+			}
+			//resettable = typeof(T) is IPoolable;// typeof(IPoolable).IsAssignableFrom(typeof(T));
 		}
 
 		public T Obtain () {

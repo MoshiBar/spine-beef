@@ -32,13 +32,13 @@ using System.Collections;
 
 namespace Spine {
 	public class TransformConstraintData : ConstraintData {
-		public List<BoneData> bones = new List<BoneData>() ~ delete _;
+		public BoneData[] bones ~ delete _;
 		public BoneData target;
 		public float rotateMix, translateMix, scaleMix, shearMix;
 		public float offsetRotation, offsetX, offsetY, offsetScaleX, offsetScaleY, offsetShearY;
 		public bool relative, local;
 
-		public List<BoneData> Bones { get { return bones; } }
+		//public List<BoneData> Bones { get { return bones; } }
 		public BoneData Target { get { return target; } set { target = value; } }
 		public float RotateMix { get { return rotateMix; } set { rotateMix = value; } }
 		public float TranslateMix { get { return translateMix; } set { translateMix = value; } }

@@ -158,11 +158,14 @@ namespace Spine {
 					data.skinRequired = GetBoolean(constraintMap,"skin", false);
 
 					if (constraintMap.ContainsKey("bones")) {
-						for (String boneName in (List<Object>)constraintMap["bones"]) {
-							BoneData bone = skeletonData.FindBone(boneName);
+						List<Object> boneList = (List<Object>)constraintMap["bones"];
+						var bones = new BoneData[boneList.Count];
+						for(int i < boneList.Count) {
+							BoneData bone = skeletonData.FindBone((String)boneList[i]);
 							//if (bone == null) throw new Exception("IK bone not found: " + boneName);
-							data.bones.Add(bone);
+							data.bones[i] = bone;
 						}
+						data.bones = bones;
 					}
 
 					String targetName = (String)constraintMap["target"];
@@ -187,11 +190,13 @@ namespace Spine {
 					data.skinRequired = GetBoolean(constraintMap,"skin", false);
 
 					if (constraintMap.ContainsKey("bones")) {
-						for (String boneName in (List<Object>)constraintMap["bones"]) {
-							BoneData bone = skeletonData.FindBone(boneName);
-							//if (bone == null) throw new Exception("Transform constraint bone not found: " + boneName);
-							data.bones.Add(bone);
+						List<Object> boneList = (List<Object>)constraintMap["bones"];
+						var bones = new BoneData[boneList.Count];
+						for(int i < boneList.Count) {
+							BoneData bone = skeletonData.FindBone((String)boneList[i]);
+							data.bones[i] = bone;
 						}
+						data.bones = bones;
 					}
 
 					String targetName = (String)constraintMap["target"];
@@ -225,11 +230,13 @@ namespace Spine {
 					data.skinRequired = GetBoolean(constraintMap,"skin", false);
 
 					if (constraintMap.ContainsKey("bones")) {
-						for (String boneName in (List<Object>)constraintMap["bones"]) {
-							BoneData bone = skeletonData.FindBone(boneName);
-							//if (bone == null) throw new Exception("Path bone not found: " + boneName);
-							data.bones.Add(bone);
+						List<Object> boneList = (List<Object>)constraintMap["bones"];
+						var bones = new BoneData[boneList.Count];
+						for(int i < boneList.Count) {
+							BoneData bone = skeletonData.FindBone((String)boneList[i]);
+							data.bones[i] = bone;
 						}
+						data.bones = bones;
 					}
 
 					String targetName = (String)constraintMap["target"];
@@ -356,7 +363,7 @@ namespace Spine {
 			String name = GetString(map, "name", _name);
 
 			var typeName = GetString(map, "type", "region");
-			var type = Enum.Parse<AttachmentType>(typeName, true);
+			var type = Enum.Parse<AttachmentType>(typeName, true).GetValueOrDefault();
 
 			String path = GetString(map, "path", name);
 

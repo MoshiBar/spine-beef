@@ -40,16 +40,16 @@ namespace Spine {
 		public float volume;
 		public float balance;
 
-		public EventData Data { get { return data; } }
+		public EventData Data => data;
 		/// <summary>The animation time this event was keyed.</summary>
-		public float Time { get { return time; } }
+		public float Time => time;
 
-		public int Int { get { return intValue; } set { intValue = value; } }
-		public float Float { get { return floatValue; } set { floatValue = value; } }
-		public String String { get { return StringValue; } set { StringValue = value; } }
+		public ref int Int => ref intValue;
+		public ref float Float => ref floatValue;
+		public ref String String => ref StringValue;
 
-		public float Volume { get { return volume; } set { volume = value; } }
-		public float Balance { get { return balance; } set { balance = value; } }
+		public ref float Volume => ref volume;
+		public ref float Balance => ref balance;
 
 		public this (float time, EventData data) {
 			//if (data == null) throw new ArgumentNullException("data", "data cannot be null.");

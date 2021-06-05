@@ -36,7 +36,7 @@ namespace Spine {
 	/// See <a href='http://esotericsoftware.com/spine-loading-skeleton-data#JSON-and-binary-data'>Loading Skeleton Data</a> in the Spine Runtimes Guide.
 	/// </summary>
 	public class AtlasAttachmentLoader : AttachmentLoader {
-		private Atlas[] atlasArray;
+		private Atlas[] atlasArray ~ DeleteContainerAndItems!(_);
 
 		public this (Atlas[] atlasArray) {
 			//if (atlasArray == null) throw new ArgumentNullException("atlas array cannot be null.");

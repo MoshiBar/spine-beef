@@ -71,8 +71,8 @@ namespace Spine {
 			data = constraint.data;
 			bones = new List<Bone>(constraint.Bones.Count);
 			for (Bone bone in constraint.Bones)
-				bones.Add(skeleton.Bones[bone.data.index]);
-			target = skeleton.Bones[constraint.target.data.index];
+				bones.Add(skeleton.bones[bone.data.index]);
+			target = skeleton.bones[constraint.target.data.index];
 			mix = constraint.mix;
 			softness = constraint.softness;
 			bendDirection = constraint.bendDirection;

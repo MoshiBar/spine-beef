@@ -38,14 +38,19 @@ namespace Spine {
 	/// across multiple skeletons.
 	/// </summary>
 	public class Slot {
-		public SlotData data ~ delete _;
+		public SlotData data;
 		public Bone bone;
 		public float r, g, b, a;
 		public float r2, g2, b2;
 		public bool hasSecondColor;
 		public Attachment attachment;
 		public float attachmentTime;
-		public List<float> deform = new List<float>() ~ delete _;
+
+		/// <summary> Vertices to deform the slot's attachment. For an unweighted mesh, the entries are local positions for each vertex. For a
+		/// weighted mesh, the entries are an offset for each vertex which will be added to the mesh's local vertex positions.
+		/// <para />
+		/// See <see cref="VertexAttachment.ComputeWorldVertices(Slot, int, int, float[], int, int)"/> and <see cref="DeformTimeline"/>.</summary>
+		public readonly List<float> deform = new List<float>() ~ delete _;
 
 		public this (SlotData data, Bone bone) {
 			//if (data == null) throw new ArgumentNullException("data", "data cannot be null.");
@@ -140,19 +145,7 @@ namespace Spine {
 			set { attachmentTime = bone.skeleton.time - value; }
 		}
 
-		/// <summary> Vertices to deform the slot's attachment. For an unweighted mesh, the entries are local positions for each vertex. For a
-		/// weighted mesh, the entries are an offset for each vertex which will be added to the mesh's local vertex positions.
-		/// <para />
-		/// See <see cref="VertexAttachment.ComputeWorldVertices(Slot, int, int, float[], int, int)"/> and <see cref="DeformTimeline"/>.</summary>
-		public List<float> Deform {
-			get {
-				return deform;
-			}
-			set {
-				//if (deform == null) throw new ArgumentNullException("deform", "deform cannot be null.");
-				deform = value;
-			}
-		}
+		
 
 		/// <summary>Sets this slot to the setup pose.</summary>
 		public void SetToSetupPose () {

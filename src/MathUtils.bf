@@ -100,18 +100,6 @@ namespace Spine {
 			return y < 0f ? atan - PI : atan;
 		}
 #else
-		/// <summary>Returns the sine of a given angle in radians.</summary>
-		[Inline]
-		static public float Sin (float radians) {
-			return Math.Sin(radians);
-		}
-
-		/// <summary>Returns the cosine of a given angle in radians.</summary>
-		[Inline]
-		static public float Cos (float radians) {
-			return Math.Cos(radians);
-		}
-
 		/// <summary>Returns the sine of a given angle in degrees.</summary>
 		[Inline]
 		static public float SinDeg (float degrees) {
@@ -122,12 +110,6 @@ namespace Spine {
 		[Inline]
 		static public float CosDeg (float degrees) {
 			return Math.Cos(degrees * DegRad);
-		}
-
-		/// <summary>Returns the atan2 using Math.Atan2.</summary>
-		[Inline]
-		static public float Atan2 (float y, float x) {
-			return Math.Atan2(y, x);
 		}
 	#endif
 		static public float Clamp (float value, float min, float max) {

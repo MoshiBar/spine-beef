@@ -32,7 +32,7 @@ using System.Collections;
 
 namespace Spine {
 	public class PathConstraintData : ConstraintData {
-		public List<BoneData> bones = new List<BoneData>() ~ delete _;
+		public BoneData[] bones ~ delete _;
 		public SlotData target;
 		public PositionMode positionMode;
 		public SpacingMode spacingMode;
@@ -43,7 +43,7 @@ namespace Spine {
 		public this (String name) : base(name) {
 		}
 
-		public List<BoneData> Bones { get { return bones; } }
+		//public List<BoneData> Bones { get { return bones; } }
 		public SlotData Target { get { return target; } set { target = value; } }
 		public PositionMode PositionMode { get { return positionMode; } set { positionMode = value; } }
 		public SpacingMode SpacingMode { get { return spacingMode; } set { spacingMode = value; } }

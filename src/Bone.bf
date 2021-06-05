@@ -39,7 +39,7 @@ namespace Spine {
 	/// constraint or application code modifies the world transform after it was computed from the local transform.
 	/// </para>
 	/// </summary>
-	public class Bone : IUpdatable {
+	public sealed class Bone : IUpdatable {
 		static public bool yDown;
 
 		public BoneData data;
@@ -55,52 +55,52 @@ namespace Spine {
 
 		public bool sorted, active;
 
-		public BoneData Data { get { return data; } }
-		public Skeleton Skeleton { get { return skeleton; } }
-		public Bone Parent { get { return parent; } }
-		public List<Bone> Children { get { return children; } }
+		public BoneData Data => data;
+		public Skeleton Skeleton => skeleton;
+		public Bone Parent => parent;
+		public List<Bone> Children => children;
 		/// <summary>Returns false when the bone has not been computed because <see cref="BoneData.SkinRequired"/> is true and the
 		/// <see cref="Skin">active skin</see> does not <see cref="Skin.Bones">contain</see> this bone.</summary>
-		public bool Active { get { return active; } }
+		public bool Active => active;
 		/// <summary>The local X translation.</summary>
-		public float X { get { return x; } set { x = value; } }
+		public ref float X => ref x;
 		/// <summary>The local Y translation.</summary>
-		public float Y { get { return y; } set { y = value; } }
+		public ref float Y => ref y;
 		/// <summary>The local rotation.</summary>
-		public float Rotation { get { return rotation; } set { rotation = value; } }
+		public ref float Rotation => ref rotation;
 
 		/// <summary>The local scaleX.</summary>
-		public float ScaleX { get { return scaleX; } set { scaleX = value; } }
+		public ref float ScaleX => ref scaleX;
 
 		/// <summary>The local scaleY.</summary>
-		public float ScaleY { get { return scaleY; } set { scaleY = value; } }
+		public ref float ScaleY => ref scaleY;
 
 		/// <summary>The local shearX.</summary>
-		public float ShearX { get { return shearX; } set { shearX = value; } }
+		public ref float ShearX => ref shearX;
 
 		/// <summary>The local shearY.</summary>
-		public float ShearY { get { return shearY; } set { shearY = value; } }
+		public ref float ShearY => ref shearY;
 
 		/// <summary>The rotation, as calculated by any constraints.</summary>
-		public float AppliedRotation { get { return arotation; } set { arotation = value; } }
+		public ref float AppliedRotation => ref arotation;
 
 		/// <summary>The applied local x translation.</summary>
-		public float AX { get { return ax; } set { ax = value; } }
+		public ref float AX => ref ax;
 
 		/// <summary>The applied local y translation.</summary>
-		public float AY { get { return ay; } set { ay = value; } }
+		public ref float AY => ref ay;
 
 		/// <summary>The applied local scaleX.</summary>
-		public float AScaleX { get { return ascaleX; } set { ascaleX = value; } }
+		public ref float AScaleX => ref ascaleX;
 
 		/// <summary>The applied local scaleY.</summary>
-		public float AScaleY { get { return ascaleY; } set { ascaleY = value; } }
+		public ref float AScaleY => ref ascaleY;
 
 		/// <summary>The applied local shearX.</summary>
-		public float AShearX { get { return ashearX; } set { ashearX = value; } }
+		public ref float AShearX => ref ashearX;
 
 		/// <summary>The applied local shearY.</summary>
-		public float AShearY { get { return ashearY; } set { ashearY = value; } }
+		public ref float AShearY => ref ashearY;
 
 		public float A => a;
 		public float B => b;
@@ -109,8 +109,8 @@ namespace Spine {
 
 		public float WorldX => worldX;
 		public float WorldY => worldY;
-		public float WorldRotationX => MathUtils.Atan2(c, a) * MathUtils.RadDeg;
-		public float WorldRotationY => MathUtils.Atan2(d, b) * MathUtils.RadDeg;
+		public float WorldRotationX => Math.Atan2(c, a) * MathUtils.RadDeg;
+		public float WorldRotationY => Math.Atan2(d, b) * MathUtils.RadDeg;
 
 		/// <summary>Returns the magnitide (always positive) of the world scale X.</summary>
 		public float WorldScaleX => Math.Sqrt(a * a + c * c);
@@ -193,11 +193,11 @@ namespace Spine {
 						s = Math.Abs(pa * pd - pb * pc) / s;
 						pb = pc * s;
 						pd = pa * s;
-						prx = MathUtils.Atan2(pc, pa) * MathUtils.RadDeg;
+						prx = Math.Atan2(pc, pa) * MathUtils.RadDeg;
 					} else {
 						pa = 0;
 						pc = 0;
-						prx = 90 - MathUtils.Atan2(pd, pb) * MathUtils.RadDeg;
+						prx = 90 - Math.Atan2(pd, pb) * MathUtils.RadDeg;
 					}
 					float rx = rotation + shearX - prx;
 					float ry = rotation + shearY - prx + 90;
@@ -224,9 +224,9 @@ namespace Spine {
 					if (data.transformMode == TransformMode.NoScale
 						&& (pa * pd - pb * pc < 0) != (skeleton.ScaleX < 0 != skeleton.ScaleY < 0)) s = -s;
 
-					float r = MathUtils.PI / 2 + MathUtils.Atan2(zc, za);
-					float zb = MathUtils.Cos(r) * s;
-					float zd = MathUtils.Sin(r) * s;
+					float r = MathUtils.PI / 2 + Math.Atan2(zc, za);
+					float zb = Math.Cos(r) * s;
+					float zd = Math.Sin(r) * s;
 					float la = MathUtils.CosDeg(shearX) * scaleX;
 					float lb = MathUtils.CosDeg(90 + shearY) * scaleY;
 					float lc = MathUtils.SinDeg(shearX) * scaleX;
@@ -268,11 +268,11 @@ namespace Spine {
 			if (parent == null) {
 				ax = worldX;
 				ay = worldY;
-				arotation = MathUtils.Atan2(c, a) * MathUtils.RadDeg;
+				arotation = Math.Atan2(c, a) * MathUtils.RadDeg;
 				ascaleX = Math.Sqrt(a * a + c * c);
 				ascaleY = Math.Sqrt(b * b + d * d);
 				ashearX = 0;
-				ashearY = MathUtils.Atan2(a * b + c * d, a * d - b * c) * MathUtils.RadDeg;
+				ashearY = Math.Atan2(a * b + c * d, a * d - b * c) * MathUtils.RadDeg;
 				return;
 			}
 			float pa = parent.a, pb = parent.b, pc = parent.c, pd = parent.d;
@@ -293,13 +293,13 @@ namespace Spine {
 			if (ascaleX > 0.0001f) {
 				float det = ra * rd - rb * rc;
 				ascaleY = det / ascaleX;
-				ashearY = MathUtils.Atan2(ra * rb + rc * rd, det) * MathUtils.RadDeg;
-				arotation = MathUtils.Atan2(rc, ra) * MathUtils.RadDeg;
+				ashearY = Math.Atan2(ra * rb + rc * rd, det) * MathUtils.RadDeg;
+				arotation = Math.Atan2(rc, ra) * MathUtils.RadDeg;
 			} else {
 				ascaleX = 0;
 				ascaleY = Math.Sqrt(rb * rb + rd * rd);
 				ashearY = 0;
-				arotation = 90 - MathUtils.Atan2(rd, rb) * MathUtils.RadDeg;
+				arotation = 90 - Math.Atan2(rd, rb) * MathUtils.RadDeg;
 			}
 		}
 
@@ -321,7 +321,7 @@ namespace Spine {
 				Bone parent = this.parent;
 				if (parent == null) return arotation;
 				float pa = parent.a, pb = parent.b, pc = parent.c, pd = parent.d, a = this.a, c = this.c;
-				return MathUtils.Atan2(pa * c - pc * a, pd * a - pb * c) * MathUtils.RadDeg;
+				return Math.Atan2(pa * c - pc * a, pd * a - pb * c) * MathUtils.RadDeg;
 			}
 		}
 
@@ -330,19 +330,19 @@ namespace Spine {
 				Bone parent = this.parent;
 				if (parent == null) return arotation;
 				float pa = parent.a, pb = parent.b, pc = parent.c, pd = parent.d, b = this.b, d = this.d;
-				return MathUtils.Atan2(pa * d - pc * b, pd * b - pb * d) * MathUtils.RadDeg;
+				return Math.Atan2(pa * d - pc * b, pd * b - pb * d) * MathUtils.RadDeg;
 			}
 		}
 
 		public float WorldToLocalRotation (float worldRotation) {
 			float sin = MathUtils.SinDeg(worldRotation), cos = MathUtils.CosDeg(worldRotation);
-			return MathUtils.Atan2(a * sin - c * cos, d * cos - b * sin) * MathUtils.RadDeg + rotation - shearX;
+			return Math.Atan2(a * sin - c * cos, d * cos - b * sin) * MathUtils.RadDeg + rotation - shearX;
 		}
 
 		public float LocalToWorldRotation (float _localRotation) {
 			float localRotation = _localRotation - (rotation - shearX);
 			float sin = MathUtils.SinDeg(localRotation), cos = MathUtils.CosDeg(localRotation);
-			return MathUtils.Atan2(cos * c + sin * d, cos * a + sin * b) * MathUtils.RadDeg;
+			return Math.Atan2(cos * c + sin * d, cos * a + sin * b) * MathUtils.RadDeg;
 		}
 
 		/// <summary>

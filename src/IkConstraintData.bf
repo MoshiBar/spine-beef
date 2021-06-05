@@ -33,7 +33,8 @@ using System.Collections;
 namespace Spine {
 	/// <summary>Stores the setup pose for an IkConstraint.</summary>
 	public class IkConstraintData : ConstraintData {
-		public List<BoneData> bones = new List<BoneData>() ~ delete _;
+		//public List<BoneData> bones = new List<BoneData>() ~ delete _;
+		public BoneData[] bones ~ delete _;
 		public BoneData target;
 		public int bendDirection = 1;
 		public bool compress, stretch, uniform;
@@ -43,10 +44,10 @@ namespace Spine {
 		}
 
 		/// <summary>The bones that are constrained by this IK Constraint.</summary>
-		public List<BoneData> Bones {
+		/*public List<BoneData> Bones {
 			get { return bones; }
-		}
-
+		}*/
+		
 		/// <summary>The bone that is the IK target.</summary>
 		public BoneData Target {
 			get { return target; }
