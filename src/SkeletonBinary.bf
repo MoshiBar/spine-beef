@@ -340,7 +340,8 @@ namespace Spine {
 			float scale = Scale;
 
 			String name = input.ReadStringRef();
-			if (name == null) name = new String(attachmentName);
+			if (name == null)
+					name = new String(attachmentName);
 
 			AttachmentType type = (AttachmentType)input.Read<uint8>().Get(0);
 			switch (type) {
@@ -356,6 +357,7 @@ namespace Spine {
 					int color = input.ReadInt();
 
 					if (path == null) path = name;
+					else delete name;
 					RegionAttachment region = attachmentLoader.NewRegionAttachment(skin, name, path);
 					if (region == null) return null;
 					region.Path = path;
@@ -406,6 +408,7 @@ namespace Spine {
 					}
 
 					if (path == null) path = name;
+					else delete name;
 					MeshAttachment mesh = attachmentLoader.NewMeshAttachment(skin, name, path);
 					if (mesh == null) return null;
 					mesh.Path = path;
@@ -441,6 +444,7 @@ namespace Spine {
 					}
 
 					if (path == null) path = name;
+					else delete name;
 					MeshAttachment mesh = attachmentLoader.NewMeshAttachment(skin, name, path);
 					if (mesh == null) return null;
 					mesh.Path = path;
